@@ -1,8 +1,7 @@
-
-
 package com.bankeasy.bankeasy.entities;
 
 public class SignupResponse {
+	
     private boolean hasError;
     private String message;
 

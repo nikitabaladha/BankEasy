@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bankeasy.bankeasy.entities.SignupRequest;
 import com.bankeasy.bankeasy.entities.SignupResponse;
 import com.bankeasy.bankeasy.services.UserService;
-
 
 @RestController
 @RequestMapping("/api/auth")

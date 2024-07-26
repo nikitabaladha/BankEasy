@@ -1,9 +1,9 @@
 package com.bankeasy.bankeasy.services;
 
-import com.bankeasy.bankeasy.entities.SignupRequest;
-import com.bankeasy.bankeasy.entities.SignupResponse;
 import java.util.List;
 
+import com.bankeasy.bankeasy.entities.SignupRequest;
+import com.bankeasy.bankeasy.entities.SignupResponse;
 import com.bankeasy.bankeasy.entities.User;
 
 public interface UserService {
