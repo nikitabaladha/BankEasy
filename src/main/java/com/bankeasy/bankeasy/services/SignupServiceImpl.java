@@ -18,7 +18,7 @@ import com.bankeasy.bankeasy.validators.SignupRequestValidator;
 import com.bankeasy.bankeasy.dao.UserDao;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class SignupServiceImpl implements SignupService {
 
     @Autowired
     private UserDao userDao;

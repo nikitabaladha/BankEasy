@@ -6,7 +6,7 @@ import com.bankeasy.bankeasy.entities.SignupRequest;
 import com.bankeasy.bankeasy.entities.SignupResponse;
 import com.bankeasy.bankeasy.entities.User;
 
-public interface UserService {
+public interface SignupService {
     public List<User> getUsers();
     public User getUser(long userId);
     public User addUser(User user);
