@@ -1,17 +1,14 @@
 package com.bankeasy.bankeasy.entities;
 
-import java.util.UUID;
-
-public class SignupResponse {
-	
+public class LoginResponse {
     private boolean hasError;
     private String message;
-    private UUID userId; 
+    private String token; // You can use JWT or any other token mechanism
 
-    public SignupResponse(boolean hasError, String message, UUID userId) {
+    public LoginResponse(boolean hasError, String message, String token) {
         this.hasError = hasError;
         this.message = message;
-        this.userId = userId;
+        this.token = token;
     }
 
     // Getters and setters
@@ -30,12 +27,12 @@ public class SignupResponse {
     public void setMessage(String message) {
         this.message = message;
     }
-    
-    public UUID getUserId() {
-        return userId;
+
+    public String getToken() {
+        return token;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setToken(String token) {
+        this.token = token;
     }
 }
