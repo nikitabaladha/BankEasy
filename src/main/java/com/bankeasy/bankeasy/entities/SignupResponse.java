@@ -1,17 +1,13 @@
 package com.bankeasy.bankeasy.entities;
 
-import java.util.UUID;
-
 public class SignupResponse {
 	
     private boolean hasError;
     private String message;
-    private UUID userId; 
 
-    public SignupResponse(boolean hasError, String message, UUID userId) {
+    public SignupResponse(boolean hasError, String message) {
         this.hasError = hasError;
         this.message = message;
-        this.userId = userId;
     }
 
     // Getters and setters
@@ -29,13 +25,5 @@ public class SignupResponse {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-    
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 }
