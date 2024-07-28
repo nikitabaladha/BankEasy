@@ -18,6 +18,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
@@ -30,7 +34,9 @@ public class LoginServiceImpl implements LoginService {
         if (!isPasswordMatch) {
             return new LoginResponse(true, "Invalid credentials", null);
         }
+       String token = jwtService.GenerateToken(loginRequest.getEmail());
+      
 
-        return new LoginResponse(false, "Login successful", "Test");
+        return new LoginResponse(false, "Login successful", token);
     }
 }
