@@ -10,7 +10,6 @@ public class SignupResponse {
         this.message = message;
     }
 
-    // Getters and setters
     public boolean isHasError() {
         return hasError;
     }
