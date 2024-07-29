@@ -1,4 +1,3 @@
-
 package com.bankeasy.bankeasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +10,11 @@ import com.bankeasy.bankeasy.entities.LoginResponse;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class LoginController {
 	
     @Autowired
 	private LoginService loginService;
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

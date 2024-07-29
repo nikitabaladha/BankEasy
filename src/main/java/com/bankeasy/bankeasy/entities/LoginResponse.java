@@ -3,7 +3,7 @@ package com.bankeasy.bankeasy.entities;
 public class LoginResponse {
     private boolean hasError;
     private String message;
-    private String token; // You can use JWT or any other token mechanism
+    private String token; 
 
     public LoginResponse(boolean hasError, String message, String token) {
         this.hasError = hasError;
@@ -11,7 +11,6 @@ public class LoginResponse {
         this.token = token;
     }
 
-    // Getters and setters
     public boolean isHasError() {
         return hasError;
     }
