@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.security;
 
 import io.jsonwebtoken.Claims;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -23,22 +22,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     private Key getSignKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
+        return Keys.hmacShaKeyFor(decodedKey);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         String path = request.getRequestURI();
-        
+
         // Skip filter for open endpoints
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-   String token = request.getHeader("access_token");
+        String token = request.getHeader("access_token");
         if (token != null) {
+            
+
             try {
                 Key key = getSignKey();
                 Claims claims = Jwts.parserBuilder()
@@ -47,11 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .parseClaimsJws(token)
                         .getBody();
 
-                String userId = claims.get("userId", String.class); 
+                String userId = claims.get("userId", String.class);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
-                e.printStackTrace(); 
+                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid token: " + e.getMessage());
                 return;
@@ -61,10 +64,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-
-
-
-
-
-
 
