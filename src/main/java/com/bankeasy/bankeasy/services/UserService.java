@@ -7,4 +7,5 @@ import com.bankeasy.bankeasy.entities.User;
 public interface UserService {
     User findByEmail(String email);
     User findById(UUID id);
+	
 }

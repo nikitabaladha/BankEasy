@@ -6,6 +6,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.bankeasy.bankeasy.entities.User;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
@@ -26,6 +29,14 @@ public class JwtService {
 
     public String extractUserId(String token) {
         return extractClaim(token, claims -> claims.get("userId", String.class));
+    }
+    
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
+    public String extractStatus(String token) {
+        return extractClaim(token, claims -> claims.get("status", String.class));
     }
 
     public Date extractExpiration(String token) {
@@ -55,11 +66,14 @@ public class JwtService {
         return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String generateToken(String userId) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        return createToken(claims, userId);
+        claims.put("userId", user.getId().toString());
+        claims.put("email", user.getEmail());
+        claims.put("status", user.getStatus());
+        return createToken(claims, user.getId().toString());
     }
+
 
     private String createToken(Map<String, Object> claims, String userId) {
         return Jwts.builder()
