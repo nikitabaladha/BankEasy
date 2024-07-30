@@ -1,7 +1,5 @@
 package com.bankeasy.bankeasy.errors;
 
-
-
 public class SignupError {
 	private String message;
 	public String getMessage() {

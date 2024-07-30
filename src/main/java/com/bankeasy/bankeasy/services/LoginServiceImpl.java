@@ -2,7 +2,6 @@ package com.bankeasy.bankeasy.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +34,8 @@ public class LoginServiceImpl implements LoginService {
         if (!isPasswordMatch) {
             return new LoginResponse(true, "Invalid credentials", null);
         }
-
-        String token = jwtService.generateToken(user.getId().toString()); // Use userId as the subject
+        
+        String token = jwtService.generateToken(user);
         return new LoginResponse(false, "Login successful", token);
     }
 }
