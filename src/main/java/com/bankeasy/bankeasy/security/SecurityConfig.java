@@ -24,6 +24,7 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/api/auth/**").permitAll() 
                     .requestMatchers("/api/users/**").authenticated()
+                    .requestMatchers("/accounts/**").authenticated()
                     .anyRequest().permitAll() 
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
