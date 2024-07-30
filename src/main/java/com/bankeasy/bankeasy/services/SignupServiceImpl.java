@@ -1,7 +1,9 @@
 package com.bankeasy.bankeasy.services;
 
 import java.security.SecureRandom;
+
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Hex;
@@ -35,7 +37,7 @@ public class SignupServiceImpl implements SignupService {
     }
 
     @Override
-    public User getUser(long userId) {
+    public User getUser(UUID userId) { // Changed to UUID
         return userDao.findById(userId).orElse(null);
     }
 
@@ -45,12 +47,21 @@ public class SignupServiceImpl implements SignupService {
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-        return userDao.save(user);
+    public User updateUser(UUID userId, User user) { // Changed to UUID
+        // Fetch existing user and update fields
+        User existingUser = userDao.findById(userId).orElse(null);
+        if (existingUser != null) {
+            existingUser.setFirstName(user.getFirstName());
+            existingUser.setLastName(user.getLastName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPassword(user.getPassword()); // Ensure password is updated correctly
+            return userDao.save(existingUser);
+        }
+        return null;
     }
 
     @Override
-    public void deleteUser(long userId) {
+    public void deleteUser(UUID userId) { // Changed to UUID
         userDao.deleteById(userId);
     }
 
