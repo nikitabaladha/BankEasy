@@ -4,8 +4,8 @@ import java.util.List;
 
 import java.util.UUID;
 
-import com.bankeasy.bankeasy.entities.SignupRequest;
-import com.bankeasy.bankeasy.entities.SignupResponse;
+import com.bankeasy.bankeasy.reqres.SignupRequest;
+import com.bankeasy.bankeasy.reqres.SignupResponse;
 import com.bankeasy.bankeasy.entities.User;
 
 public interface SignupService {

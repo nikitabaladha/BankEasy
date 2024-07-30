@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankeasy.bankeasy.dao.UserDao;
-import com.bankeasy.bankeasy.entities.LoginRequest;
-import com.bankeasy.bankeasy.entities.LoginResponse;
+import com.bankeasy.bankeasy.reqres.LoginRequest;
+import com.bankeasy.bankeasy.reqres.LoginResponse;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.security.JwtService;
 

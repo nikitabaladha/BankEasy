@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.bankeasy.bankeasy.entities.SignupRequest;
-import com.bankeasy.bankeasy.entities.SignupResponse;
+import com.bankeasy.bankeasy.reqres.SignupRequest;
+import com.bankeasy.bankeasy.reqres.SignupResponse;
 import com.bankeasy.bankeasy.services.SignupService;
 
 @RestController

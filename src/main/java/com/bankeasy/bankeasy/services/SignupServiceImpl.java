@@ -13,8 +13,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
-import com.bankeasy.bankeasy.entities.SignupRequest;
-import com.bankeasy.bankeasy.entities.SignupResponse;
+import com.bankeasy.bankeasy.reqres.SignupRequest;
+import com.bankeasy.bankeasy.reqres.SignupResponse;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.validators.SignupRequestValidator;
 import com.bankeasy.bankeasy.dao.UserDao;

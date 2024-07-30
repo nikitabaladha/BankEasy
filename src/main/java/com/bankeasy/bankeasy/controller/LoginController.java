@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.bankeasy.bankeasy.services.LoginService;
-import com.bankeasy.bankeasy.entities.LoginRequest;
-import com.bankeasy.bankeasy.entities.LoginResponse;
+import com.bankeasy.bankeasy.reqres.LoginRequest;
+import com.bankeasy.bankeasy.reqres.LoginResponse;
 
 
 @RestController
