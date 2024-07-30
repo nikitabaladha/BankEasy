@@ -1,5 +1,6 @@
 package com.bankeasy.bankeasy.entities;
 
+
 public class LoginRequest {
     private String email;
     private String password;

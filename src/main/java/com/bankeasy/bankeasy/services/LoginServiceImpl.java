@@ -1,7 +1,8 @@
-
 package com.bankeasy.bankeasy.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import com.bankeasy.bankeasy.dao.UserDao;
 import com.bankeasy.bankeasy.entities.LoginRequest;
 import com.bankeasy.bankeasy.entities.LoginResponse;
 import com.bankeasy.bankeasy.entities.User;
+import com.bankeasy.bankeasy.security.JwtService;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -19,7 +21,6 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
-
     @Autowired
     private JwtService jwtService;
 
@@ -34,9 +35,8 @@ public class LoginServiceImpl implements LoginService {
         if (!isPasswordMatch) {
             return new LoginResponse(true, "Invalid credentials", null);
         }
-       String token = jwtService.GenerateToken(loginRequest.getEmail());
-      
 
+        String token = jwtService.generateToken(user.getId().toString()); // Use userId as the subject
         return new LoginResponse(false, "Login successful", token);
     }
 }
