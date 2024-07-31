@@ -11,5 +11,4 @@ public interface AccountService {
     Account updateAccount(UUID accountId, BigDecimal newBalance, String status);
     Account getAccountByNumber(String accountNumber);
     void deleteAccount(UUID accountId);
-   
-}
+   }

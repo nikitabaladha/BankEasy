@@ -1,7 +1,9 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
+
 import com.bankeasy.bankeasy.entities.User;
+import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 public class AccountController {
 
     @Autowired
@@ -25,18 +28,22 @@ public class AccountController {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<Account> createAccount(@RequestParam String accountNumber) {
+    public ResponseEntity<ApiResponse<Account>> createAccount(@RequestBody Map<String, String> request) {
+        String accountNumber = request.get("accountNumber");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
         User user = userService.findById(UUID.fromString(userId));
-        
+
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
         }
-        
+
         Account account = accountService.createAccount(user, accountNumber);
-        return new ResponseEntity<>(account, HttpStatus.CREATED);
+        // Remove sensitive information from the Account object if needed before sending
+        return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", account), HttpStatus.CREATED);
     }
+   
 
     @PutMapping("/update/{accountId}")
     public ResponseEntity<Account> updateAccount(@PathVariable UUID accountId, @RequestParam BigDecimal balance, @RequestParam String status) {

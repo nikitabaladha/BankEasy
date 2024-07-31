@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,8 +24,11 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(unique = true, nullable = false)
+    private UUID user_id;
+    
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
 
     @Column(unique = true, nullable = false)
@@ -49,6 +53,7 @@ public class Account {
     public Account() {}
 
     public Account(User user, String accountNumber, BigDecimal balance, String accountStatus) {
+        this.user_id = user.getId();
         this.user = user;
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -58,9 +63,13 @@ public class Account {
     // Getters and Setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
+    
+    public UUID getUserId() {
+    	return user_id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+//    public User getUser() { return user; }
+//    public void setUser(User user) { this.user = user; }
 
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
