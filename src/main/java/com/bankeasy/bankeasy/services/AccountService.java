@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface AccountService {
     Account createAccount(User user, String accountNumber);
     Account updateAccount(UUID accountId, BigDecimal newBalance, String status);
-    Account getAccountByNumber(String accountNumber);
+    Account getAccountByUserId(UUID userId);
     void deleteAccount(UUID accountId);
+	
    }

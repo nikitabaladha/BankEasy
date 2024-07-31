@@ -45,44 +45,47 @@ public class AccountController {
     }
    
 
-    @PutMapping("/update/{accountId}")
-    public ResponseEntity<Account> updateAccount(@PathVariable UUID accountId, @RequestParam BigDecimal balance, @RequestParam String status) {
+//    @PutMapping("/update/{accountId}")
+//    public ResponseEntity<Account> updateAccount(@PathVariable UUID accountId, @RequestParam BigDecimal balance, @RequestParam String status) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userId = (String) authentication.getPrincipal();
+//        
+//        Account account = accountService.getAccountByNumber(accountId.toString());
+//        if (account == null || !account.getUserId().equals(UUID.fromString(userId))) {
+//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//        }
+//        
+//        account = accountService.updateAccount(accountId, balance, status);
+//        return new ResponseEntity<>(account, HttpStatus.OK);
+//    }
+
+    @GetMapping("/get")
+    public ResponseEntity<ApiResponse<Account>> getMyAccount() {
+        // Get the authenticated user's ID from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
-        
-        Account account = accountService.getAccountByNumber(accountId.toString());
-        if (account == null || !account.getUser().getId().equals(UUID.fromString(userId))) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
+        // Fetch the account associated with the authenticated user
+        Account account = accountService.getAccountByUserId(UUID.fromString(userId));
+        if (account == null) {
+            return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
         }
-        
-        account = accountService.updateAccount(accountId, balance, status);
-        return new ResponseEntity<>(account, HttpStatus.OK);
+
+        // Prepare and return the response
+        return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", account), HttpStatus.OK);
     }
 
-    @GetMapping("/{accountNumber}")
-    public ResponseEntity<Account> getAccountByNumber(@PathVariable String accountNumber) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal();
-        
-        Account account = accountService.getAccountByNumber(accountNumber);
-        if (account == null || !account.getUser().getId().equals(UUID.fromString(userId))) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        
-        return new ResponseEntity<>(account, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/delete/{accountId}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable UUID accountId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal();
-        
-        Account account = accountService.getAccountByNumber(accountId.toString());
-        if (account == null || !account.getUser().getId().equals(UUID.fromString(userId))) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        
-        accountService.deleteAccount(accountId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+//    @DeleteMapping("/delete/{accountId}")
+//    public ResponseEntity<Void> deleteAccount(@PathVariable UUID accountId) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userId = (String) authentication.getPrincipal();
+//        
+//        Account account = accountService.getAccountByNumber(accountId.toString());
+//        if (account == null || !account.getUserId().equals(UUID.fromString(userId))) {
+//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//        }
+//        
+//        accountService.deleteAccount(accountId);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//    }
 }

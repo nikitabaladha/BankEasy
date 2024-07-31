@@ -32,8 +32,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getAccountByNumber(String accountNumber) {
-        return accountDao.findByAccountNumber(accountNumber);
+    public Account getAccountByUserId(UUID userId) {
+        return accountDao.findByUserId(userId);
     }
 
     @Override

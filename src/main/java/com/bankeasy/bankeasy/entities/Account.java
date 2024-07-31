@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,10 +25,10 @@ public class Account {
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private UUID user_id;
+    private UUID userId;
     
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
     private User user;
 
     @Column(unique = true, nullable = false)
@@ -53,7 +53,7 @@ public class Account {
     public Account() {}
 
     public Account(User user, String accountNumber, BigDecimal balance, String accountStatus) {
-        this.user_id = user.getId();
+        this.userId = user.getId();
         this.user = user;
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -65,11 +65,9 @@ public class Account {
     public void setId(UUID id) { this.id = id; }
     
     public UUID getUserId() {
-    	return user_id;
+    	return userId;
     }
 
-//    public User getUser() { return user; }
-//    public void setUser(User user) { this.user = user; }
 
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
