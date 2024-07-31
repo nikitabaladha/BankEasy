@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
-
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
@@ -44,22 +42,36 @@ public class AccountController {
         return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", account), HttpStatus.CREATED);
     }
    
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse<Account>> updateAccount(@RequestBody Map<String, String> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userIdStr = (String) authentication.getPrincipal();
+        UUID userId = UUID.fromString(userIdStr);
 
-//    @PutMapping("/update/{accountId}")
-//    public ResponseEntity<Account> updateAccount(@PathVariable UUID accountId, @RequestParam BigDecimal balance, @RequestParam String status) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userId = (String) authentication.getPrincipal();
-//        
-//        Account account = accountService.getAccountByNumber(accountId.toString());
-//        if (account == null || !account.getUserId().equals(UUID.fromString(userId))) {
-//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        }
-//        
-//        account = accountService.updateAccount(accountId, balance, status);
-//        return new ResponseEntity<>(account, HttpStatus.OK);
-//    }
+        User user = userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+        }
 
-    @GetMapping("/get")
+        try {
+            BigDecimal newBalance = new BigDecimal(request.get("balance"));
+
+            Account updatedAccount = accountService.updateAccountByUserId(userId, newBalance);
+
+            if (updatedAccount == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account updated successfully.", updatedAccount), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>(new ApiResponse<>(true, "Invalid balance format.", null), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account.", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+ @GetMapping("/get")
     public ResponseEntity<ApiResponse<Account>> getMyAccount() {
         // Get the authenticated user's ID from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

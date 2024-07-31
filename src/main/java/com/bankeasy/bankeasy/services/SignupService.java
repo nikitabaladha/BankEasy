@@ -1,9 +1,7 @@
 package com.bankeasy.bankeasy.services;
 
 import java.util.List;
-
 import java.util.UUID;
-
 import com.bankeasy.bankeasy.reqres.SignupRequest;
 import com.bankeasy.bankeasy.reqres.SignupResponse;
 import com.bankeasy.bankeasy.entities.User;

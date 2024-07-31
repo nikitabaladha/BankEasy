@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.Column;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,9 +47,7 @@ public class Account {
     @UpdateTimestamp
     private Date updatedAt;
 
-  
-
-    public Account() {}
+  public Account() {}
 
     public Account(User user, String accountNumber, BigDecimal balance, String accountStatus) {
         this.userId = user.getId();
@@ -75,8 +72,8 @@ public class Account {
     public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
 
-    public String getAccountStatus() { return accountStatus; }
-    public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
+    public String getAccountStatus() { return accountStatus;  }
+    public void setAccountStatus(String accountStatus) { this.accountStatus= accountStatus; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }

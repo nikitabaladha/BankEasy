@@ -5,9 +5,7 @@ import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -23,11 +21,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateAccount(UUID accountId, BigDecimal newBalance, String status) {
-        Account account = accountDao.findById(accountId).orElseThrow(() -> new RuntimeException("Account not found"));
+    public Account updateAccountByUserId(UUID userId, BigDecimal newBalance) {
+        Account account = accountDao.findByUserId(userId);
         account.setBalance(newBalance);
-        account.setAccountStatus(status);
-       
         return accountDao.save(account);
     }
 

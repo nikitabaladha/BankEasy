@@ -1,10 +1,8 @@
 package com.bankeasy.bankeasy.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.bankeasy.bankeasy.dao.UserDao;
 import com.bankeasy.bankeasy.reqres.LoginRequest;
 import com.bankeasy.bankeasy.reqres.LoginResponse;
