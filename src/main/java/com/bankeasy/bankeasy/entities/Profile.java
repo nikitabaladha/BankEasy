@@ -10,7 +10,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -28,13 +27,6 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
     private User user;
-    
-    @Column(name = "accountId", unique = true, nullable = false)
-    private UUID accountId; 
-    
-    @OneToOne
-    @JoinColumn(name = "accountId", nullable = false, insertable = false, updatable = false)
-    private Account account;
 
     @Column(nullable = false)
     private String name;
@@ -55,11 +47,9 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(User user, Account account, String name, String address, String phoneNumber) {
-    	this.userId = user.getId();
-    	this.accountId = account.getId();
+    public Profile(User user, String name, String address, String phoneNumber) {
+        this.userId = user.getId();
         this.user = user;
-        this.account = account;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -72,12 +62,6 @@ public class Profile {
     	return userId;
     }
     
-    public UUID getAccountId() {
-    	return accountId;
-    }
-
-    public void setAccountId(UUID accountId) { this.accountId = accountId; }
-    
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -86,10 +70,6 @@ public class Profile {
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-
-    public BigDecimal getAvailableBalance() {
-        return account != null ? account.getBalance() : BigDecimal.ZERO;
-    }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
