@@ -5,6 +5,7 @@ import com.bankeasy.bankeasy.entities.Account;
 import java.util.UUID;
 
 public interface AccountDao extends JpaRepository<Account, UUID> {
-    Account findByUserId(UUID userId); 
+    Account findByUserId(UUID userId);
 }
+
 

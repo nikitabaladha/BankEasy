@@ -37,5 +37,10 @@ public class AccountServiceImpl implements AccountService {
         account.setAccountStatus("Deleted");
         accountDao.save(account);
     }
+    
+    @Override
+    public Account findByUserId(UUID userId) {
+        return accountDao.findByUserId(userId);
+    }
 
 }

@@ -32,6 +32,7 @@ public class AccountController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
+        
         User user = userService.findById(UUID.fromString(userId));
 
         if (user == null) {

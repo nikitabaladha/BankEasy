@@ -10,6 +10,7 @@ public interface AccountService {
     Account updateAccountByUserId(UUID userId, BigDecimal newBalance);
     Account getAccountByUserId(UUID userId);
     void deleteAccount(Account account);
+	Account findByUserId(UUID userId);
 
 	
    }
