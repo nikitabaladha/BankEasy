@@ -65,7 +65,6 @@ public class Account {
     	return userId;
     }
 
-
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
 

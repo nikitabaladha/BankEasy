@@ -104,9 +104,9 @@ public class AccountController {
          return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
      }
 
-     accountService.deleteAccount(account);
+     accountService.deleteAccount(userId);
 
-     return new ResponseEntity<>(new ApiResponse<>(false, "Account deleted successfully.", "Deleted"), HttpStatus.OK);
+     return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Deleted.", "Deleted"), HttpStatus.OK);
  }
 
 }

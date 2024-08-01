@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.bankeasy.bankeasy.entities.Account;
 import java.util.UUID;
 
