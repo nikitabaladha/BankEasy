@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.security;
 
 import org.springframework.context.annotation.Bean;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +23,7 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/api/auth/**").permitAll() 
                     .requestMatchers("/api/users/**").authenticated()
+                    .requestMatchers("/accounts/**").authenticated()
                     .anyRequest().permitAll() 
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

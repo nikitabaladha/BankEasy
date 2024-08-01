@@ -1,6 +1,5 @@
 package com.bankeasy.bankeasy.reqres;
 
-
 public class LoginResponse {
     private boolean hasError;
     private String message;

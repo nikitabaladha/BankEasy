@@ -1,6 +1,5 @@
 package com.bankeasy.bankeasy.reqres;
 
-
 public class SignupRequest {
     private String firstName;
     private String lastName;

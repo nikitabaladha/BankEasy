@@ -1,15 +1,14 @@
-package com.bankeasy.bankeasy.entities;
+package com.bankeasy.bankeasy.reqres;
 
-
-public class LoginResponse {
+public class ApiResponse<T> {
     private boolean hasError;
     private String message;
-    private String token; 
+    private T data;
 
-    public LoginResponse(boolean hasError, String message, String token) {
+    public ApiResponse(boolean hasError, String message, T data) {
         this.hasError = hasError;
         this.message = message;
-        this.token = token;
+        this.data = data;
     }
 
     public boolean isHasError() {
@@ -28,11 +27,12 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public String getToken() {
-        return token;
+    public T getData() {
+        return data;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setData(T data) {
+        this.data = data;
     }
 }
+
