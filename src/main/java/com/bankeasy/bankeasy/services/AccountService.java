@@ -9,6 +9,7 @@ public interface AccountService {
     Account createAccount(User user, String accountNumber);
     Account updateAccountByUserId(UUID userId, BigDecimal newBalance);
     Account getAccountByUserId(UUID userId);
-    void deleteAccount(UUID accountId);
+    void deleteAccount(Account account);
+
 	
    }

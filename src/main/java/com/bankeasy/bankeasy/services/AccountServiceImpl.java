@@ -33,7 +33,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(UUID accountId) {
-        accountDao.deleteById(accountId);
+    public void deleteAccount(Account account) {
+        account.setAccountStatus("Deleted");
+        accountDao.save(account);
     }
+
 }

@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
+
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
@@ -38,7 +39,7 @@ public class AccountController {
         }
 
         Account account = accountService.createAccount(user, accountNumber);
-        // Remove sensitive information from the Account object if needed before sending
+       
         return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", account), HttpStatus.CREATED);
     }
    
@@ -73,31 +74,39 @@ public class AccountController {
     
  @GetMapping("/get")
     public ResponseEntity<ApiResponse<Account>> getMyAccount() {
-        // Get the authenticated user's ID from the security context
+       
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
 
-        // Fetch the account associated with the authenticated user
+      
         Account account = accountService.getAccountByUserId(UUID.fromString(userId));
         if (account == null) {
             return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
         }
 
-        // Prepare and return the response
+      
         return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", account), HttpStatus.OK);
     }
 
-//    @DeleteMapping("/delete/{accountId}")
-//    public ResponseEntity<Void> deleteAccount(@PathVariable UUID accountId) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userId = (String) authentication.getPrincipal();
-//        
-//        Account account = accountService.getAccountByNumber(accountId.toString());
-//        if (account == null || !account.getUserId().equals(UUID.fromString(userId))) {
-//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        }
-//        
-//        accountService.deleteAccount(accountId);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
+ @DeleteMapping("/delete")
+ public ResponseEntity<ApiResponse<String>> deleteAccount() {
+     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+     String userIdStr = (String) authentication.getPrincipal();
+     UUID userId = UUID.fromString(userIdStr);
+
+     User user = userService.findById(userId);
+     if (user == null) {
+         return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+     }
+
+     Account account = accountService.getAccountByUserId(userId);
+     if (account == null) {
+         return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
+     }
+
+     accountService.deleteAccount(account);
+
+     return new ResponseEntity<>(new ApiResponse<>(false, "Account deleted successfully.", "Deleted"), HttpStatus.OK);
+ }
+
 }
