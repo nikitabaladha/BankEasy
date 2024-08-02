@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.validators;
 
 import java.math.BigDecimal;
-
 import jakarta.validation.constraints.DecimalMin;
 
 public class AccountValidator {
