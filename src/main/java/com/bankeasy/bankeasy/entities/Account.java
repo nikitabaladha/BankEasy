@@ -47,7 +47,7 @@ public class Account {
     @UpdateTimestamp
     private Date updatedAt;
 
-  public Account() {}
+    public Account() {}
 
     public Account(User user, String accountNumber, BigDecimal balance, String accountStatus) {
         this.userId = user.getId();
@@ -57,14 +57,12 @@ public class Account {
         this.accountStatus = accountStatus;
     }
 
-    // Getters and Setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     
     public UUID getUserId() {
     	return userId;
     }
-
 
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
