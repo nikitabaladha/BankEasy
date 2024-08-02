@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,41 +29,49 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Profile>> createProfile(@RequestBody Map<String, String> request) {
         try {
+
             String name = request.get("name");
             String address = request.get("address");
             String phoneNumber = request.get("phoneNumber");
-            
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userId = (String) authentication.getPrincipal();
+
             User user = userService.findById(UUID.fromString(userId));
-            
+
             if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null),
+                        HttpStatus.UNAUTHORIZED);
             }
 
             Profile profile = profileService.createProfile(user, name, address, phoneNumber);
-            
-            return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile),
+                    HttpStatus.CREATED);
         } catch (Exception e) {
-        	e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create profile. " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+
+            e.printStackTrace();
+
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create profile. " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Profile>> updateProfile(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userIdStr = (String) authentication.getPrincipal();
-        UUID userId = UUID.fromString(userIdStr);
-
-        User user = userService.findById(userId);
-        
-        if (user == null) {
-            return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
-        }
-
         try {
+        	
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
+
+            User user = userService.findById(userId);
+
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null),
+                        HttpStatus.UNAUTHORIZED);
+            }
+
             String newName = request.get("name");
             String newAddress = request.get("address");
             String newPhoneNumber = request.get("phoneNumber");
@@ -72,14 +79,41 @@ public class ProfileController {
             Profile updatedProfile = profileService.updateProfileByUserId(userId, newName, newAddress, newPhoneNumber);
 
             if (updatedProfile == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found for the user.", null), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found for the user.", null),
+                        HttpStatus.NOT_FOUND);
             }
-            
-            return new ResponseEntity<>(new ApiResponse<>(false, "Profile updated successfully.", updatedProfile), HttpStatus.OK);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Profile updated successfully.", updatedProfile),
+                    HttpStatus.OK);
         } catch (Exception e) {
+        	
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account.", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account.", null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/get")
+    public ResponseEntity<ApiResponse<Profile>> getProfile() {
+        try {
+        	
+        	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
 
+            Profile profile = profileService.getProfileByUserId(userId);
+
+            if (profile == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found for the user.", null), HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Profile retrieved successfully.", profile), HttpStatus.OK);
+        } catch (Exception e) {
+        	
+            e.printStackTrace();
+            
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve profile. " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
