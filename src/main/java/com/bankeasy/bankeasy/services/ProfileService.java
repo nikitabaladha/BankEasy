@@ -11,6 +11,7 @@ public interface ProfileService {
     Profile updateProfileByUserId(UUID userId, String newName, String newAddress, String newPhoneNumber);
     
     Profile getProfileByUserId(UUID userId);
+    
 //    void deleteProfile(Profile profile);
 	
 
