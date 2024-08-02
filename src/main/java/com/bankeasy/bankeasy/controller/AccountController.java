@@ -1,15 +1,21 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.UserService;
+import com.bankeasy.bankeasy.validators.AccountValidator;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -26,54 +32,60 @@ public class AccountController {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Account>> createAccount(@RequestBody Map<String, String> request) {
-        String accountNumber = request.get("accountNumber");
+    public ResponseEntity<ApiResponse<Account>> createAccount() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal();
-        
-        User user = userService.findById(UUID.fromString(userId));
+            User user = userService.findById(userId);
 
-        if (user == null) {
-            return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            }
+
+            Account createdAccount = accountService.createAccount(user);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", createdAccount), HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account. " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        Account account = accountService.createAccount(user, accountNumber);
-       
-        return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", account), HttpStatus.CREATED);
     }
-   
+    
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<Account>> updateAccount(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userIdStr = (String) authentication.getPrincipal();
-        UUID userId = UUID.fromString(userIdStr);
-
-        User user = userService.findById(userId);
-        if (user == null) {
-            return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountValidator request, BindingResult result) {
+        if (result.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
+            result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
+            return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
         }
 
         try {
-            BigDecimal newBalance = new BigDecimal(request.get("balance"));
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
 
-            Account updatedAccount = accountService.updateAccountByUserId(userId, newBalance);
+            User user = userService.findById(userId);
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            }
+
+            Account updatedAccount = accountService.updateAccountByUserId(userId, request.getBalance());
 
             if (updatedAccount == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
             }
 
             return new ResponseEntity<>(new ApiResponse<>(false, "Account updated successfully.", updatedAccount), HttpStatus.OK);
-        } catch (NumberFormatException e) {
-            return new ResponseEntity<>(new ApiResponse<>(true, "Invalid balance format.", null), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account.", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
- @GetMapping("/get")
-    public ResponseEntity<ApiResponse<Account>> getMyAccount() {
+
+     @GetMapping("/get")
+     public ResponseEntity<ApiResponse<Account>> getMyAccount() {
        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = (String) authentication.getPrincipal();
@@ -88,8 +100,8 @@ public class AccountController {
         return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", account), HttpStatus.OK);
     }
 
- @DeleteMapping("/delete")
- public ResponseEntity<ApiResponse<String>> deleteAccount() {
+     @DeleteMapping("/delete")
+     public ResponseEntity<ApiResponse<String>> deleteAccount() {
      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
      String userIdStr = (String) authentication.getPrincipal();
      UUID userId = UUID.fromString(userIdStr);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -15,16 +16,20 @@ public class AccountServiceImpl implements AccountService {
     private AccountDao accountDao;
 
     @Override
-    public Account createAccount(User user, String accountNumber) {
-        Account account = new Account(user, accountNumber, BigDecimal.ZERO, "Active");
+    public Account createAccount(User user) {
+        String accountNumber = AccountUtils.generateRandomAccountNumber();
+        Account account = new Account(user, accountNumber, BigDecimal.ZERO);
         return accountDao.save(account);
     }
 
     @Override
     public Account updateAccountByUserId(UUID userId, BigDecimal newBalance) {
         Account account = accountDao.findByUserId(userId);
-        account.setBalance(newBalance);
-        return accountDao.save(account);
+        if (account != null) {
+            account.setBalance(newBalance);
+            return accountDao.save(account);
+        }
+        return null; 
     }
 
     @Override
@@ -34,13 +39,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(Account account) {
-        account.setAccountStatus("Deleted");
-        accountDao.save(account);
+        accountDao.delete(account);
     }
-    
+
     @Override
     public Account findByUserId(UUID userId) {
         return accountDao.findByUserId(userId);
     }
-
 }

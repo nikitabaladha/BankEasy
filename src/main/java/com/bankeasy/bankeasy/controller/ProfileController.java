@@ -48,6 +48,7 @@ public class ProfileController {
             }
 
             Profile profile = profileService.createProfile(user, request.getName(), request.getAddress(), request.getPhoneNumber());
+            
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();

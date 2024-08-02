@@ -6,11 +6,9 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface AccountService {
-    Account createAccount(User user, String accountNumber);
+    Account createAccount(User user);
     Account updateAccountByUserId(UUID userId, BigDecimal newBalance);
     Account getAccountByUserId(UUID userId);
     void deleteAccount(Account account);
-	Account findByUserId(UUID userId);
-
-	
-   }
+    Account findByUserId(UUID userId);
+}
