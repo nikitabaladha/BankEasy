@@ -1,5 +1,6 @@
 package com.bankeasy.bankeasy.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -89,4 +93,28 @@ public class BeneficiaryController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update beneficiary: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    
+    @GetMapping("/get-all")
+    public ResponseEntity<ApiResponse<List<Beneficiary>>> getAllBeneficiaries() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
+
+            User user = userService.findById(userId);
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            }
+
+            List<Beneficiary> beneficiaries = beneficiaryService.getAllBeneficiariesByUserId(userId);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiaries retrieved successfully.", beneficiaries), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve beneficiaries: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+   
+
 }

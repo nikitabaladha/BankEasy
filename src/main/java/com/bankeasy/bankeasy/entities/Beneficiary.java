@@ -31,6 +31,10 @@ public class Beneficiary {
     @Column(name = "ifsc_code", nullable = false)
     private String ifscCode;
 
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BeneficiaryStatus status = BeneficiaryStatus.ACTIVE;
+    
     public Beneficiary() {
     }
 
@@ -41,6 +45,7 @@ public class Beneficiary {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
         this.ifscCode = ifscCode;
+        this.status = BeneficiaryStatus.ACTIVE;
     }
 
     public UUID getId() {
@@ -86,4 +91,18 @@ public class Beneficiary {
     public void setIfscCode(String ifscCode) {
         this.ifscCode = ifscCode;
     }
+    
+    public BeneficiaryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BeneficiaryStatus status) {
+        this.status = status;
+    }
+    
+    public enum BeneficiaryStatus {
+        ACTIVE,
+        INACTIVE
+    }
+
 }

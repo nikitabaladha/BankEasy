@@ -1,6 +1,9 @@
 package com.bankeasy.bankeasy.validators;
 
+import com.bankeasy.bankeasy.entities.Beneficiary;
+
 import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -20,6 +23,8 @@ public class BeneficiaryValidator {
     @NotBlank(message = "Account Number is required.")
     @Size(min = 10, max = 20, message = "Account Number must be between 10 and 20 characters.")
     private String accountNumber;
+    
+    private Beneficiary.BeneficiaryStatus status;
 
     public String getName() {
         return name;
@@ -51,5 +56,13 @@ public class BeneficiaryValidator {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public Beneficiary.BeneficiaryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(Beneficiary.BeneficiaryStatus status) {
+        this.status = status;
     }
 }

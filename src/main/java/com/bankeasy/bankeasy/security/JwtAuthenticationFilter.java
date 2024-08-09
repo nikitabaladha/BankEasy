@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
-            return;
+            return;	
         }
 
         String token = request.getHeader("access_token");
