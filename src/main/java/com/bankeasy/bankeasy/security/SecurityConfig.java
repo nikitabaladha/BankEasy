@@ -23,10 +23,10 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/api/auth/**").permitAll() 
                     .requestMatchers("/api/users/**").authenticated()
-                    .requestMatchers("/accounts/**").authenticated()
-                    .requestMatchers("/profiles/**").authenticated()
-                    .requestMatchers("/beneficiaries/**").authenticated()
-                    .requestMatchers("/transactions/**").authenticated()
+                    .requestMatchers("/api/accounts/**").authenticated()
+                    .requestMatchers("/api/profiles/**").authenticated()
+                    .requestMatchers("/api/beneficiaries/**").authenticated()
+                    .requestMatchers("/api/transactions/**").authenticated()
                     .anyRequest().permitAll() 
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

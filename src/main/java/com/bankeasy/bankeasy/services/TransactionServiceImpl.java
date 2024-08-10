@@ -26,35 +26,33 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactionsByUserId(UUID userId) {
-        return transactionDao.findByUserId(userId);
+    public List<Transaction> getAllTransactionsByUserId(UUID userId) {
+        return transactionDao.findAllByUserId(userId);
     }
 
     
-   
+  @Override
+  public Transaction getTransactionByTransactionId(UUID transactionId) {
+      return transactionDao.findById(transactionId)
+            .orElseThrow(() -> new RuntimeException("Transaction not found for ID: " + transactionId));
+ }
     
     
-    
-    @Override
-    public Transaction getTransactionById(UUID transactionId) {
-        return transactionDao.findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found for ID: " + transactionId));
-    }
-
-    @Override
-    public Transaction updateTransactionById(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription) {
-        Transaction transaction = getTransactionById(transactionId);
-
-        transaction.setAmount(newAmount);
-        transaction.setTransactionType(newTransactionType);
-        transaction.setDescription(newDescription);
-
-        return transactionDao.save(transaction);
-    }
-
-    @Override
-    public void deleteTransaction(UUID transactionId) {
-        Transaction transaction = getTransactionById(transactionId);
-        transactionDao.delete(transaction);
-    }
+//
+//    @Override
+//    public Transaction updateTransactionById(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription) {
+//        Transaction transaction = getTransactionById(transactionId);
+//
+//        transaction.setAmount(newAmount);
+//        transaction.setTransactionType(newTransactionType);
+//        transaction.setDescription(newDescription);
+//
+//        return transactionDao.save(transaction);
+//    }
+//
+//    @Override
+//    public void deleteTransaction(UUID transactionId) {
+//        Transaction transaction = getTransactionById(transactionId);
+//        transactionDao.delete(transaction);
+//    }
 }
