@@ -30,15 +30,12 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionDao.findAllByUserId(userId);
     }
 
-    
-  @Override
-  public Transaction getTransactionByTransactionId(UUID transactionId) {
-      return transactionDao.findById(transactionId)
-            .orElseThrow(() -> new RuntimeException("Transaction not found for ID: " + transactionId));
+    @Override
+    public Transaction getTransactionByTransactionId(UUID transactionId) {
+    	return transactionDao.findById(transactionId)
+    			.orElseThrow(() -> new RuntimeException("Transaction not found for ID: " + transactionId));
  }
     
-    
-
     @Override
     public Transaction updateTransactionByTransactionId(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription) {
         Transaction transaction = getTransactionByTransactionId(transactionId);
@@ -49,11 +46,4 @@ public class TransactionServiceImpl implements TransactionService {
 
         return transactionDao.save(transaction);
     }
-    
-//
-//    @Override
-//    public void deleteTransaction(UUID transactionId) {
-//        Transaction transaction = getTransactionById(transactionId);
-//        transactionDao.delete(transaction);
-//    }
 }
