@@ -16,10 +16,7 @@ public interface TransactionService {
     
     List<Transaction> getAllTransactionsByUserId(UUID userId);
   
-    
- 
-//    
-//    Transaction updateTransactionById(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription);
+    Transaction updateTransactionByTransactionId(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription);
 //    
 //    void deleteTransaction(UUID transactionId);
 

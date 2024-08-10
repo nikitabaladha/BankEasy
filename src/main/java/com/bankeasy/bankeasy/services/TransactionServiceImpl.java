@@ -38,17 +38,18 @@ public class TransactionServiceImpl implements TransactionService {
  }
     
     
-//
-//    @Override
-//    public Transaction updateTransactionById(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription) {
-//        Transaction transaction = getTransactionById(transactionId);
-//
-//        transaction.setAmount(newAmount);
-//        transaction.setTransactionType(newTransactionType);
-//        transaction.setDescription(newDescription);
-//
-//        return transactionDao.save(transaction);
-//    }
+
+    @Override
+    public Transaction updateTransactionByTransactionId(UUID transactionId, BigDecimal newAmount, TransactionType newTransactionType, String newDescription) {
+        Transaction transaction = getTransactionByTransactionId(transactionId);
+
+        transaction.setAmount(newAmount);
+        transaction.setTransactionType(newTransactionType);
+        transaction.setDescription(newDescription);
+
+        return transactionDao.save(transaction);
+    }
+    
 //
 //    @Override
 //    public void deleteTransaction(UUID transactionId) {

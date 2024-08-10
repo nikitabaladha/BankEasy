@@ -97,24 +97,36 @@ public class TransactionController {
     }
 
 
+    @PutMapping("/update/{transactionId}")
+    public ResponseEntity<ApiResponse<Transaction>> updateTransaction(@PathVariable UUID transactionId, 
+    	    @Valid @RequestBody TransactionValidator transactionValidator, BindingResult result) {
+    	    try {
+    	        if (result.hasErrors()) {
+    	            StringBuilder errorMessage = new StringBuilder();
+    	            result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
+    	            return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+    	        }
 
-//    @PutMapping("/update/{transactionId}")
-//    public ResponseEntity<ApiResponse<Transaction>> updateTransaction(@PathVariable UUID transactionId, @Valid @RequestBody TransactionValidator transactionValidator, BindingResult result) {
-//    	try {
-//    	
-//    	if (result.hasErrors()) {
-//            StringBuilder errorMessage = new StringBuilder();
-//            result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-//            return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
-//        }
-//
-//       Transaction updatedTransaction = transactionService.updateTransactionById(transactionId, transactionValidator.getAmount(), transactionValidator.getTransactionType(), transactionValidator.getDescription());
-//            return new ResponseEntity<>(new ApiResponse<>(false, "Transaction updated successfully.", updatedTransaction), HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    	        // Log incoming values
+    	        System.out.println("Updating transaction with ID: " + transactionId);
+    	        System.out.println("New Amount: " + transactionValidator.getAmount());
+    	        System.out.println("New Transaction Type: " + transactionValidator.getTransactionType());
+    	        System.out.println("New Description: " + transactionValidator.getDescription());
+
+    	        Transaction updatedTransaction = transactionService.updateTransactionByTransactionId(
+    	            transactionId, 
+    	            transactionValidator.getAmount(), 
+    	            transactionValidator.getTransactionType(), 
+    	            transactionValidator.getDescription()
+    	        );
+
+    	        return new ResponseEntity<>(new ApiResponse<>(false, "Transaction updated successfully.", updatedTransaction), HttpStatus.OK);
+    	    } catch (Exception e) {
+    	        e.printStackTrace();
+    	        return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+    	    }
+    	}
+
 
     
     
