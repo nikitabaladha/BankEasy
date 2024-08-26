@@ -27,6 +27,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/profiles/**").authenticated()
                     .requestMatchers("/api/beneficiaries/**").authenticated()
                     .requestMatchers("/api/transactions/**").authenticated()
+                    .requestMatchers("/api/kyc/**").authenticated()
+                    
+                   
                     .anyRequest().permitAll() 
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
