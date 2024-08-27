@@ -20,16 +20,15 @@ public class SignupController {
 
     @Autowired
     private SignupService signupService;
-
+    
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody SignupValidator request, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }
-
+        	
             ApiResponse<String> response = signupService.signup(request);
             return new ResponseEntity<>(response,  response.isHasError() ? HttpStatus.BAD_REQUEST : HttpStatus.CREATED);
         } catch (Exception e) {
