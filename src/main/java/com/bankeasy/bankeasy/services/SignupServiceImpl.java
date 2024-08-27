@@ -1,20 +1,19 @@
+
 package com.bankeasy.bankeasy.services;
 
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Hex;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
-import com.bankeasy.bankeasy.reqres.SignupRequest;
-import com.bankeasy.bankeasy.reqres.SignupResponse;
-import com.bankeasy.bankeasy.entities.User;
-import com.bankeasy.bankeasy.validators.SignupRequestValidator;
+
 import com.bankeasy.bankeasy.dao.UserDao;
+import com.bankeasy.bankeasy.entities.User;
+import com.bankeasy.bankeasy.reqres.ApiResponse;
+import com.bankeasy.bankeasy.validators.SignupValidator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+
 
 @Service
 public class SignupServiceImpl implements SignupService {
@@ -23,79 +22,40 @@ public class SignupServiceImpl implements SignupService {
     private UserDao userDao;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    
-    @Autowired
-    private SignupRequestValidator validator;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public List<User> getUsers() {
-        return userDao.findAll();
-    }
+    public ApiResponse<String> signup(SignupValidator signupValidator) {
+        // Validate the input data
+        if (!isValid(signupValidator)) {
+            return new ApiResponse<>(true, "Invalid input data", null);
+        }
 
-    @Override
-    public User getUser(UUID userId) { // Changed to UUID
-        return userDao.findById(userId).orElse(null);
-    }
-
-    @Override
-    public User addUser(User user) {
-        return userDao.save(user);
-    }
-
-    @Override
-    public User updateUser(UUID userId, User user) {
-        
-        User existingUser = userDao.findById(userId).orElse(null);
+        // Check if email already exists
+        User existingUser = userDao.findByEmail(signupValidator.getEmail());
         if (existingUser != null) {
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setPassword(user.getPassword());
-            return userDao.save(existingUser);
-        }
-        return null;
-    }
-
-    @Override
-    public void deleteUser(UUID userId) { 
-        userDao.deleteById(userId);
-    }
-
-    @Override
-    public SignupResponse signup(SignupRequest signupRequest) {
-        if (userDao.findByEmail(signupRequest.getEmail()) != null) {
-            return new SignupResponse(true, "User already exists");
+            return new ApiResponse<>(true, "Email already exists", null);
         }
 
-        Errors errors = new BeanPropertyBindingResult(signupRequest, "signupRequest");
-        validator.validate(signupRequest, errors);
-
-        if (errors.hasErrors()) {
-            String errorMessage = getErrorMessage(errors);
-            return new SignupResponse(true, errorMessage);
-        }
-
+        // Create a new user
         User user = new User();
-        user.setFirstName(signupRequest.getFirstName());
-        user.setLastName(signupRequest.getLastName());
-        user.setEmail(signupRequest.getEmail());
+        user.setFirstName(signupValidator.getFirstName());
+        user.setLastName(signupValidator.getLastName());
+        user.setEmail(signupValidator.getEmail());
 
-        String password = signupRequest.getPassword();
+        String password = signupValidator.getPassword();
         String salt = generateSalt();
         user.setSalt(salt);
         user.setPassword(passwordEncoder.encode(password + salt));
 
         userDao.save(user);
-        return new SignupResponse(false, "User registered successfully");
+
+        return new ApiResponse<>(false, "User registered successfully", null);
     }
 
-    private String getErrorMessage(Errors errors) {
-        StringBuilder errorMessage = new StringBuilder();
-        for (ObjectError error : errors.getAllErrors()) {
-            errorMessage.append(error.getDefaultMessage()).append(" ");
-        }
-        return errorMessage.toString().trim();
+    private boolean isValid(SignupValidator signupValidator) {
+        // Add additional validation logic here if needed
+        return true;
     }
 
     private String generateSalt() {

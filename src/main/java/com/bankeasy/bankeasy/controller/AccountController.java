@@ -29,6 +29,8 @@ public class AccountController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Account>> createAccount() {
         try {
+        	
+        	 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);

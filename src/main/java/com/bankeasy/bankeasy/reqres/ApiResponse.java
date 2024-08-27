@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.reqres;
 
 public class ApiResponse<T> {
+
     private boolean hasError;
     private String message;
     private T data;
