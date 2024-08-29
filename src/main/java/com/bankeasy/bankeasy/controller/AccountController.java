@@ -6,7 +6,11 @@ import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.AccountValidator;
+import com.bankeasy.bankeasy.reqres.AccountCreateRequest;
+
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.UUID;
 
 @RestController
@@ -27,10 +32,8 @@ public class AccountController {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Account>> createAccount() {
+    public ResponseEntity<ApiResponse<Account>> createAccount(@RequestBody AccountCreateRequest request) {
         try {
-        	
-        	 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);
@@ -41,7 +44,7 @@ public class AccountController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Account createdAccount = accountService.createAccount(user);
+            Account createdAccount = accountService.createAccount(user, request);
 
             return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", createdAccount), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -50,6 +53,7 @@ public class AccountController {
         }
     }
 
+    
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountValidator request, BindingResult result) {
         try {

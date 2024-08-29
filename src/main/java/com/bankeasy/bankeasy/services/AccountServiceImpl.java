@@ -3,8 +3,11 @@ package com.bankeasy.bankeasy.services;
 import com.bankeasy.bankeasy.dao.AccountDao;
 import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.User;
+import com.bankeasy.bankeasy.reqres.AccountCreateRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -16,11 +19,13 @@ public class AccountServiceImpl implements AccountService {
     private AccountDao accountDao;
 
     @Override
-    public Account createAccount(User user) {
+    public Account createAccount(User user, AccountCreateRequest request) {
+    	
         String accountNumber = AccountUtils.generateRandomAccountNumber();
-        Account account = new Account(user, accountNumber, BigDecimal.ZERO);
+        Account account = new Account(user, accountNumber, BigDecimal.ZERO, request.getAccountType());
         return accountDao.save(account);
     }
+    
 
     @Override
     public Account updateAccountByUserId(UUID userId, BigDecimal newBalance) {

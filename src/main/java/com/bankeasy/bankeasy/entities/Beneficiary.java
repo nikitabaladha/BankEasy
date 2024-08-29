@@ -1,7 +1,12 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "beneficiaries")
@@ -34,6 +39,14 @@ public class Beneficiary {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private BeneficiaryStatus status = BeneficiaryStatus.ACTIVE;
+    
+    @Column(updatable = false, nullable = false)
+    @CreationTimestamp
+    private Date createdAt;
+
+    @Column(nullable = false)
+    @UpdateTimestamp
+    private Date updatedAt;
     
     public Beneficiary() {
     }
@@ -104,5 +117,11 @@ public class Beneficiary {
         ACTIVE,
         INACTIVE
     }
+    
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public Date getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
 
 }

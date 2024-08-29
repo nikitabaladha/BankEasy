@@ -35,7 +35,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String status = "pending";
+    private String status = "Pending";
 
     @Column(nullable = false)
     private String salt;
