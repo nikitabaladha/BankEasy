@@ -3,6 +3,7 @@ package com.bankeasy.bankeasy.reqres;
 import jakarta.validation.constraints.NotBlank;
 
 public class AccountCreateRequest {
+	
 @NotBlank(message = "Account type is required")
    private String accountType;
 

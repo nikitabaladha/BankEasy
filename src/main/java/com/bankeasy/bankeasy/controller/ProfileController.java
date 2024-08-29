@@ -46,7 +46,7 @@ public class ProfileController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Profile profile = profileService.createProfile(user, request.getName(), request.getAddress(), request.getPhoneNumber());
+            Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(), request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth());
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class ProfileController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Profile updatedProfile = profileService.updateProfileByUserId(userId, request.getName(), request.getAddress(), request.getPhoneNumber());
+            Profile updatedProfile = profileService.updateProfileByUserId(userId, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(),request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth());
 
             if (updatedProfile == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found for the user.", null), HttpStatus.NOT_FOUND);
@@ -105,3 +105,5 @@ public class ProfileController {
         }
     }
 }
+
+

@@ -9,7 +9,6 @@ import com.bankeasy.bankeasy.validators.AccountValidator;
 import com.bankeasy.bankeasy.reqres.AccountCreateRequest;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

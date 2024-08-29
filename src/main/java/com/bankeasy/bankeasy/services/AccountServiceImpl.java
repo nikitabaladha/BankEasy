@@ -21,6 +21,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(User user, AccountCreateRequest request) {
     	
+    	Account existingAccount = accountDao.findByUserId(user.getId());
+        if (existingAccount != null) {
+            throw new RuntimeException("Account already exists for the user.");
+        }
+        
         String accountNumber = AccountUtils.generateRandomAccountNumber();
         Account account = new Account(user, accountNumber, BigDecimal.ZERO, request.getAccountType());
         return accountDao.save(account);
