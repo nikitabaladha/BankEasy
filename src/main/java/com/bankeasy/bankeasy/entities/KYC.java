@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.*;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
@@ -9,18 +10,17 @@ import java.util.UUID;
 @Entity
 @Table(name = "kyc")
 public class KYC {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", unique = true, nullable = false)
-    private UUID id;
-
-    @Column(nullable = false)
+	@Column(unique = true, nullable = false)
     private UUID userId;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", insertable = false, updatable = false)
-    private User user;
+	    
+	@OneToOne
+	@JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
+	private User user;
 
     @Column(name = "document_type", length = 50, nullable = false)
     private String documentType;
@@ -47,29 +47,14 @@ public class KYC {
         this.user = user;
         this.documentType = documentType;
         this.documentNumber = documentNumber;
-        this.verified = verified != null ? verified : Boolean.FALSE; // Initialize verified to false if null
+        this.verified = verified != null ? verified : Boolean.FALSE; 
     }
- 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        this.userId = user.getId();
-    }
+    
+    public UUID getId() { return id; }
+    
+    public void setId(UUID id) { this.id = id; }
+    
+    public UUID getUserId() { return userId; }
 
     public String getDocumentType() {
         return documentType;

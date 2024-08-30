@@ -1,6 +1,5 @@
 package com.bankeasy.bankeasy.services;
 
-import com.bankeasy.bankeasy.entities.Beneficiary;
 import com.bankeasy.bankeasy.entities.KYC;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.dao.KYCDao;  
@@ -19,24 +18,17 @@ public class KYCServiceImpl implements KYCService {
 
     @Override
     public KYC createKYC(User user, String documentType, String documentNumber) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
+    
+    if (user == null) {
+    throw new IllegalArgumentException("User cannot be null");
+    }
 
-        KYC kyc = new KYC(user, documentType, documentNumber, Boolean.FALSE); 
+    KYC kyc = new KYC(user, documentType, documentNumber, Boolean.FALSE); 
         return kycDao.save(kyc);
     }
 
     @Override
-    public KYC updateKYCByUserId(UUID userId, String documentType, String documentNumber) {
-        KYC kyc = kycDao.findByUserId(userId);
-        if (kyc == null) {
-            throw new IllegalArgumentException("KYC not found for userId: " + userId);
-        }
-
-        kyc.setDocumentType(documentType);
-        kyc.setDocumentNumber(documentNumber);
-      
+    public KYC updateKYC(KYC kyc) {
         return kycDao.save(kyc);
     }
 
@@ -49,6 +41,5 @@ public class KYCServiceImpl implements KYCService {
     public List<KYC> getAllKYCsByUserId(UUID userId) {
         return kycDao.findAllByUserId(userId);
     }
-    
-    
+     
 }
