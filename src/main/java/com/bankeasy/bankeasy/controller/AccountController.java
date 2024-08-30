@@ -1,4 +1,3 @@
-
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
@@ -8,7 +7,6 @@ import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.AccountUpdateValidator;
-import com.bankeasy.bankeasy.validators.AccountValidator;
 
 import jakarta.validation.Valid;
 

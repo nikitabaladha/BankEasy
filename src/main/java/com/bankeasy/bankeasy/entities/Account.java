@@ -37,7 +37,9 @@ public class Account {
 
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
-
+    
+    @Column(length = 20)
+    private String accountType;
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -48,11 +50,12 @@ public class Account {
     private Date updatedAt;
 
     public Account() {}
-    public Account(User user, String accountNumber, BigDecimal balance) {
+    public Account(User user, String accountNumber, BigDecimal balance, String accountType) {
         this.userId = user.getId();
         this.user = user;
         this.accountNumber = accountNumber;
         this.balance = balance;
+        this.accountType = accountType;
        
     }
 
@@ -66,10 +69,14 @@ public class Account {
 
     public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
+    
+    public String getAccountType() { return accountType; }
+    public void setAccountType(String accountType) { this.accountType = accountType; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+	
 }

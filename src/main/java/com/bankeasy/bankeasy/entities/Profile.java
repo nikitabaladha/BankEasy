@@ -211,4 +211,6 @@ public class Profile {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+	
 }

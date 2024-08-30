@@ -1,9 +1,7 @@
-
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.User;
-
 
 import java.math.BigDecimal;
 import java.util.UUID;

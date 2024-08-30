@@ -1,7 +1,9 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.dao.AccountDao;
+import com.bankeasy.bankeasy.dao.ProfileDao;
 import com.bankeasy.bankeasy.entities.Account;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +17,28 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountDao accountDao;
-
+    
+    @Autowired
+    private ProfileDao profileDao;
+	
     @Override
     public Account createAccount(User user) {
-    	
-    	Account existingAccount = accountDao.findByUserId(user.getId());
-        if (existingAccount != null) {
-            throw new RuntimeException("Account already exists for the user.");
-        }
         
-        String accountNumber = AccountUtils.generateRandomAccountNumber();
-        Account account = new Account(user, accountNumber, BigDecimal.ZERO);
-        return accountDao.save(account);
+        Profile profile = profileDao.findByUserId(user.getId());
+
+        if (profile == null) {
+            throw new RuntimeException("Profile not found for userId: " + user.getId());
+        }
+
+       String accountType = profile.getAccountType();
+
+       String accountNumber = AccountUtils.generateRandomAccountNumber();
+
+       Account account = new Account(user, accountNumber, BigDecimal.ZERO, accountType);
+
+       return accountDao.save(account);
     }
-    
+
     @Override
     public Account updateAccountByUserId(UUID userId, BigDecimal newBalance) {
         Account account = accountDao.findByUserId(userId);
