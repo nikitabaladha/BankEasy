@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
-
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
@@ -54,6 +53,8 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    
    
 
     @PutMapping("/update")

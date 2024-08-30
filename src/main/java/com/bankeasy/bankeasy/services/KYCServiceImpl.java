@@ -17,13 +17,13 @@ public class KYCServiceImpl implements KYCService {
     private KYCDao kycDao; 
 
     @Override
-    public KYC createKYC(User user, String documentType, String documentNumber) {
+    public KYC createKYC(User user, String documentType, String documentNumber, String documentUrl) {
     
     if (user == null) {
     throw new IllegalArgumentException("User cannot be null");
     }
 
-    KYC kyc = new KYC(user, documentType, documentNumber, Boolean.FALSE); 
+    KYC kyc = new KYC(user, documentType, documentUrl, documentNumber, Boolean.FALSE); 
         return kycDao.save(kyc);
     }
 

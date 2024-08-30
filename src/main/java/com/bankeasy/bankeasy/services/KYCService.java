@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface KYCService {
     
-    KYC createKYC(User user, String documentType, String documentNumber);
+    KYC createKYC(User user, String documentType, String documentUrl, String documentNumber);
     
     KYC updateKYC(KYC kyc);
     
@@ -16,5 +16,4 @@ public interface KYCService {
     
     List<KYC> getAllKYCsByUserId(UUID userId);
 }
-
 
