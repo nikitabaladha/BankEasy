@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 public class AccountCreateRequest {
 	
 @NotBlank(message = "Account type is required")
-   private String accountType;
+  private String accountType;
 
    public String getAccountType() {
         return accountType;

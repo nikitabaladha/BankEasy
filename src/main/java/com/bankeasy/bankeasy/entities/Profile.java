@@ -62,6 +62,9 @@ public class Profile {
 
     @Column(nullable = false)
     private LocalDate dateOfBirth; 
+    
+    @Column(nullable = false)
+    private String accountType; 
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -73,7 +76,7 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth) {
+    public Profile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType) {
         this.userId = user.getId();
         this.user = user;
         this.firstName = firstName;
@@ -87,6 +90,7 @@ public class Profile {
         this.maritalStatus = maritalStatus;
         this.occupation = occupation;
         this.dateOfBirth = dateOfBirth;
+        this.accountType = accountType; 
     }
 
     public UUID getId() {
@@ -113,7 +117,7 @@ public class Profile {
         return lastName;
     }
 
-    public void setLastName(String LastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
@@ -188,6 +192,9 @@ public class Profile {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+    
+    public String getAccountType() { return accountType; }
+    public void setAccountType(String accountType) { this.accountType = accountType; }
 
     public Date getCreatedAt() {
         return createdAt;

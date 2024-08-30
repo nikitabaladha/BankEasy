@@ -9,13 +9,14 @@ import com.bankeasy.bankeasy.entities.User;
 public interface ProfileService {
 	
     Profile createProfile(User user, String firstName, String lastName, String address, String phoneNumber, String city, String state,
-                          String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth);
+                          String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType);
     
     Profile getProfileByUserId(UUID userId);
     
-   
-     Profile updateProfileByUserId(UUID userId, String newFirstName,String newLastName, String newAddress, String newPhoneNumber,String city, String state,
-             String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth);
+
+	Profile updateProfile(Profile existingProfile);
+
+	
      
     // void deleteProfile(Profile profile);
 }

@@ -8,8 +8,7 @@ public class AccountValidator {
 		@DecimalMin(value = "0.0", inclusive = true, message = "Balance must be greater than or equal to zero.")
 	    private BigDecimal balance = BigDecimal.ZERO;
 	    
-
-	    public BigDecimal getBalance() {
+		public BigDecimal getBalance() {
 	        return balance;
 	    }
 

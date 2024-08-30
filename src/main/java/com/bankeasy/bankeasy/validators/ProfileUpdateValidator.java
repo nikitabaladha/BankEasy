@@ -1,66 +1,54 @@
 package com.bankeasy.bankeasy.validators;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate; 
+import java.time.LocalDate;
 
-public class ProfileValidator {
+public class ProfileUpdateValidator {
 
-	@NotBlank(message = "Firstname is required.")
     @Size(min = 2, max = 30, message = "Firstname must be between 2 and 30 characters.")
     private String firstName;
-    
-    @NotBlank(message = "Lastname is required.")
+
     @Size(min = 2, max = 30, message = "Lastname must be between 2 and 30 characters.")
     private String lastName;
 
-    @NotBlank(message = "Phone number is required.")
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits.")
     private String phoneNumber;
 
-    @NotBlank(message = "Address is required.")
     @Size(min = 10, max = 100, message = "Address must be between 10 and 100 characters.")
     private String address;
 
-    @NotBlank(message = "City is required.")
     @Size(max = 100, message = "City name must not exceed 100 characters.")
     private String city;
 
-    @NotBlank(message = "State is required.")
     @Size(max = 100, message = "State name must not exceed 100 characters.")
     private String state;
 
-    @NotBlank(message = "Zip code is required.")
     @Size(max = 20, message = "Zip code must not exceed 20 characters.")
     private String zipCode;
 
-    @NotBlank(message = "Country is required.")
     @Size(max = 100, message = "Country name must not exceed 100 characters.")
     private String country;
 
-    @NotBlank(message = "Marital status is required.")
     @Size(max = 20, message = "Marital status must not exceed 20 characters.")
     private String maritalStatus;
 
-    @NotBlank(message = "Occupation is required.")
     @Size(max = 100, message = "Occupation must not exceed 100 characters.")
     private String occupation;
 
-    @NotNull(message = "Date of birth is required.") 
     private LocalDate dateOfBirth;
-    
-    @NotBlank(message = "Account type is required")
+
     private String accountType;
 
-     public String getAccountType() {
-          return accountType;
-      }
+    // Getters and setters for all fields
+
+    public String getAccountType() {
+        return accountType;
+    }
 
     public void setAccountType(String accountType) {
-          this.accountType = accountType;
-      }
+        this.accountType = accountType;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -69,7 +57,7 @@ public class ProfileValidator {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    
+
     public String getLastName() {
         return lastName;
     }
@@ -142,11 +130,11 @@ public class ProfileValidator {
         this.occupation = occupation;
     }
 
-    public LocalDate getDateOfBirth() { 
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) { 
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }

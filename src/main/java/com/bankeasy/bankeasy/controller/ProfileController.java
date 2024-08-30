@@ -6,6 +6,7 @@ import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.ProfileService;
 import com.bankeasy.bankeasy.services.UserService;
+import com.bankeasy.bankeasy.validators.ProfileUpdateValidator;
 import com.bankeasy.bankeasy.validators.ProfileValidator;
 
 import jakarta.validation.Valid;
@@ -32,10 +33,11 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Profile>> createProfile(@Valid @RequestBody ProfileValidator request, BindingResult result) {
         try {
-            if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+        	
+        	if (result.hasErrors()) {
+                
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,7 +48,7 @@ public class ProfileController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(), request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth());
+            Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(), request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth(), request.getAccountType());
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,13 +56,13 @@ public class ProfileController {
         }
     }
 
+    
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<Profile>> updateProfile(@Valid @RequestBody ProfileValidator request, BindingResult result) {
+    public ResponseEntity<ApiResponse<Profile>> updateProfile(@Valid @RequestBody ProfileUpdateValidator request, BindingResult result) {
         try {
             if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -72,11 +74,27 @@ public class ProfileController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Profile updatedProfile = profileService.updateProfileByUserId(userId, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(),request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth());
-
-            if (updatedProfile == null) {
+            // Retrieve existing profile
+            Profile existingProfile = profileService.getProfileByUserId(userId);
+            if (existingProfile == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found for the user.", null), HttpStatus.NOT_FOUND);
             }
+
+            // Update only the fields that are not null in the request
+            if (request.getFirstName() != null) existingProfile.setFirstName(request.getFirstName());
+            if (request.getLastName() != null) existingProfile.setLastName(request.getLastName());
+            if (request.getAddress() != null) existingProfile.setAddress(request.getAddress());
+            if (request.getPhoneNumber() != null) existingProfile.setPhoneNumber(request.getPhoneNumber());
+            if (request.getCity() != null) existingProfile.setCity(request.getCity());
+            if (request.getState() != null) existingProfile.setState(request.getState());
+            if (request.getZipCode() != null) existingProfile.setZipCode(request.getZipCode());
+            if (request.getCountry() != null) existingProfile.setCountry(request.getCountry());
+            if (request.getMaritalStatus() != null) existingProfile.setMaritalStatus(request.getMaritalStatus());
+            if (request.getOccupation() != null) existingProfile.setOccupation(request.getOccupation());
+            if (request.getDateOfBirth() != null) existingProfile.setDateOfBirth(request.getDateOfBirth());
+            if (request.getAccountType() != null) existingProfile.setAccountType(request.getAccountType());
+
+            Profile updatedProfile = profileService.updateProfile(existingProfile);
 
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile updated successfully.", updatedProfile), HttpStatus.OK);
         } catch (Exception e) {
@@ -84,6 +102,7 @@ public class ProfileController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update profile: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/get")
     public ResponseEntity<ApiResponse<Profile>> getProfile() {

@@ -17,33 +17,14 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileDao profileDao;
 
     @Override
-    public Profile createProfile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth) {
+    public Profile createProfile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType) {
         
-        Profile profile = new Profile(user, firstName, lastName, address, phoneNumber, city, state, zipCode, country, maritalStatus, occupation, dateOfBirth);
+        Profile profile = new Profile(user, firstName, lastName, address, phoneNumber, city, state, zipCode, country, maritalStatus, occupation, dateOfBirth,accountType);
         return profileDao.save(profile);
     }
 
     @Override
-    public Profile updateProfileByUserId(UUID userId, String newFirstName, String newLastName, String newAddress, String newPhoneNumber,String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth) {
-
-        Profile profile = profileDao.findByUserId(userId);
-
-        if (profile == null) {
-            throw new RuntimeException("Profile not found for user ID: " + userId);
-        }
-
-        profile.setFirstName(newFirstName);
-        profile.setLastName(newLastName);
-        profile.setAddress(newAddress);
-        profile.setPhoneNumber(newPhoneNumber);
-        profile.setCity(city);
-        profile.setState(state);
-        profile.setZipCode(zipCode);
-        profile.setCountry(country);
-        profile.setMaritalStatus(maritalStatus);
-        profile.setOccupation(occupation);
-        profile.setDateOfBirth(dateOfBirth);
-
+    public Profile updateProfile(Profile profile) {
         return profileDao.save(profile);
     }
 
