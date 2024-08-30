@@ -49,7 +49,6 @@ public class KYCValidator {
     @Size(max = 50, message = "Document number must not exceed 50 characters.")
     private String documentNumber;
     
-//    @NotBlank(message = "Document image is required.")
     private String documentUrl;
 
     public String getDocumentType() {
