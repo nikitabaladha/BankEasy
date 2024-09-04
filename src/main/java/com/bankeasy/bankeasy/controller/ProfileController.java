@@ -11,6 +11,7 @@ import com.bankeasy.bankeasy.validators.ProfileValidator;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -50,6 +51,9 @@ public class ProfileController {
 
             Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(), request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth(), request.getAccountType());
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
+           } catch (DataIntegrityViolationException e) {
+            // Unique key constraint violation, profile already exists
+            return new ResponseEntity<>(new ApiResponse<>(true, "Profile already exists for this user.", null), HttpStatus.CONFLICT);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create profile: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);

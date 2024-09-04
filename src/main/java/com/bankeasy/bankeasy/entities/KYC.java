@@ -3,12 +3,19 @@ package com.bankeasy.bankeasy.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "kyc")
 public class KYC {
+
+    public enum VerificationStatus {
+        VERIFIED,
+        PENDING,
+        REJECTED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,11 +34,12 @@ public class KYC {
     @Column(name = "document_number", length = 50, nullable = false)
     private String documentNumber;
 
-    @Column(name = "document_url",length = 255)
-    private String documentUrl; 
+    @Column(name = "document_url", length = 255)
+    private String documentUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "verified", nullable = false)
-    private Boolean verified = Boolean.FALSE;
+    private VerificationStatus verified = VerificationStatus.PENDING;
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -41,69 +49,77 @@ public class KYC {
     @UpdateTimestamp
     private Date updatedAt;
 
-
+    // Default constructor
     public KYC() {}
 
-    public KYC(User user, String documentType, String documentNumber, String documentUrl, Boolean verified) {
+    // Constructor for setting the values, with a check for null `verified` value
+    public KYC(User user, String documentType, String documentNumber, String documentUrl, VerificationStatus verified) {
         this.userId = user.getId();
         this.user = user;
         this.documentType = documentType;
         this.documentNumber = documentNumber;
         this.documentUrl = documentUrl;
-        this.verified = verified != null ? verified : Boolean.FALSE;
+        this.verified = (verified != null) ? verified : VerificationStatus.PENDING;
     }
 
-  public UUID getId() { return id; }
-  
-  public void setId(UUID id) { this.id = id; }
-  
-  public UUID getUserId() { return userId; }
+    // Getters and setters
+    public UUID getId() {
+        return id;
+    }
 
-  public String getDocumentType() {
-      return documentType;
-  }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-  public void setDocumentType(String documentType) {
-      this.documentType = documentType;
-  }
+    public UUID getUserId() {
+        return userId;
+    }
 
-  public String getDocumentNumber() {
-      return documentNumber;
-  }
+    public String getDocumentType() {
+        return documentType;
+    }
 
-  public void setDocumentNumber(String documentNumber) {
-      this.documentNumber = documentNumber;
-  }
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
 
-  public Boolean getVerified() {
-      return verified;
-  }
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
 
-  public void setVerified(Boolean verified) {
-      this.verified = verified;
-  }
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
-  public Date getCreatedAt() {
-      return createdAt;
-  }
+    public VerificationStatus getVerified() {
+        return verified;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-      this.createdAt = createdAt;
-  }
+    public void setVerified(VerificationStatus verified) {
+        this.verified = verified;
+    }
 
-  public Date getUpdatedAt() {
-      return updatedAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-      this.updatedAt = updatedAt;
-  }
-  
-  public String getDocumentUrl() {
-      return documentUrl;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public void setDocumentUrl(String documentUrl) {
-      this.documentUrl = documentUrl;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getDocumentUrl() {
+        return documentUrl;
+    }
+
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
+    }
 }

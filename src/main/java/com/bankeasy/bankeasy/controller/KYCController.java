@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -48,6 +49,10 @@ public class KYCController {
             @RequestParam(value = "file", required = false) MultipartFile file
            ) {
         try {
+        	
+        	System.out.println("Received createKYC request with data: " + request); 
+        	System.out.println("Uploaded file: " + file);
+        	   
             if (result.hasErrors()) {
                 String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
                 return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
@@ -70,10 +75,13 @@ public class KYCController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "File is required.", null), HttpStatus.BAD_REQUEST);
             }
 
-            // Create the KYC entry with the uploaded document URL
+           
             KYC kyc = kycService.createKYC(user, request.getDocumentType(), request.getDocumentNumber(), fileUrl);
 
             return new ResponseEntity<>(new ApiResponse<>(false, "KYC created successfully.", kyc), HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            
+            return new ResponseEntity<>(new ApiResponse<>(true, "KYC already exists for this user.", null), HttpStatus.CONFLICT);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -148,3 +156,4 @@ public class KYCController {
         }
     }
 }
+

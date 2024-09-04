@@ -1,9 +1,9 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.entities.KYC;
+import com.bankeasy.bankeasy.entities.KYC.VerificationStatus;
 import com.bankeasy.bankeasy.entities.User;
-import com.bankeasy.bankeasy.dao.KYCDao;  
-import com.bankeasy.bankeasy.services.KYCService;
+import com.bankeasy.bankeasy.dao.KYCDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +14,17 @@ import java.util.UUID;
 public class KYCServiceImpl implements KYCService {
 
     @Autowired
-    private KYCDao kycDao; 
+    private KYCDao kycDao;
 
     @Override
     public KYC createKYC(User user, String documentType, String documentNumber, String documentUrl) {
-    
-    if (user == null) {
-    throw new IllegalArgumentException("User cannot be null");
-    }
 
-    KYC kyc = new KYC(user, documentType, documentUrl, documentNumber, Boolean.FALSE); 
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+       
+        KYC kyc = new KYC(user, documentType, documentNumber, documentUrl, VerificationStatus.PENDING); 
         return kycDao.save(kyc);
     }
 
@@ -34,12 +35,11 @@ public class KYCServiceImpl implements KYCService {
 
     @Override
     public KYC getKYCByUserId(UUID userId) {
-        return kycDao.findByUserId(userId); 
+        return kycDao.findByUserId(userId);
     }
 
     @Override
     public List<KYC> getAllKYCsByUserId(UUID userId) {
         return kycDao.findAllByUserId(userId);
     }
-     
 }
