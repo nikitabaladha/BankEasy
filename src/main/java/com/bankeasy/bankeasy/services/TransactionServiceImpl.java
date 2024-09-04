@@ -2,7 +2,6 @@ package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.dao.TransactionDao;
 
-
 import com.bankeasy.bankeasy.entities.Transaction;
 import com.bankeasy.bankeasy.entities.Transaction.TransactionType;
 import com.bankeasy.bankeasy.entities.User;

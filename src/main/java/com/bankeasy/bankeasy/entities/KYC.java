@@ -12,7 +12,7 @@ import java.util.UUID;
 public class KYC {
 
     public enum VerificationStatus {
-        Verified,
+        Approved,
         Pending,
         Rejected
     }

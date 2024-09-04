@@ -37,9 +37,9 @@ public class Transaction {
     private BigDecimal amount;
 
     public enum TransactionType {
-        DEPOSIT,
-        WITHDRAWAL,
-        TRANSFER
+        Deposite,
+        Withdrawal,
+        Transfer
     }
 
     @Enumerated(EnumType.STRING)
