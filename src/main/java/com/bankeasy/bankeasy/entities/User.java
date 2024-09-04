@@ -1,22 +1,21 @@
 package com.bankeasy.bankeasy.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.util.UUID;
+
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
+
+    public enum UserStatus {
+        Pending,
+        Rejected,
+        Approved
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,8 +33,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    // Use the enum for status
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status = "Pending";
+    private UserStatus status = UserStatus.Pending;
 
     @Column(nullable = false)
     private String salt;
@@ -98,11 +99,11 @@ public class User {
         this.password = password;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 

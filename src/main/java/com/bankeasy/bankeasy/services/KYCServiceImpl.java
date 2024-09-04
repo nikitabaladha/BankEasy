@@ -24,7 +24,7 @@ public class KYCServiceImpl implements KYCService {
         }
 
        
-        KYC kyc = new KYC(user, documentType, documentNumber, documentUrl, VerificationStatus.PENDING); 
+        KYC kyc = new KYC(user, documentType, documentNumber, documentUrl, VerificationStatus.Pending); 
         return kycDao.save(kyc);
     }
 

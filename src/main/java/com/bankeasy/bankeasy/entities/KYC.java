@@ -12,9 +12,9 @@ import java.util.UUID;
 public class KYC {
 
     public enum VerificationStatus {
-        VERIFIED,
-        PENDING,
-        REJECTED
+        Verified,
+        Pending,
+        Rejected
     }
 
     @Id
@@ -39,7 +39,7 @@ public class KYC {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "verified", nullable = false)
-    private VerificationStatus verified = VerificationStatus.PENDING;
+    private VerificationStatus verified = VerificationStatus.Pending;
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -59,7 +59,7 @@ public class KYC {
         this.documentType = documentType;
         this.documentNumber = documentNumber;
         this.documentUrl = documentUrl;
-        this.verified = (verified != null) ? verified : VerificationStatus.PENDING;
+        this.verified = (verified != null) ? verified : VerificationStatus.Pending;
     }
 
     // Getters and setters
