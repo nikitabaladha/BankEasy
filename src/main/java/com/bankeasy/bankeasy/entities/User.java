@@ -13,8 +13,10 @@ public class User {
 
     public enum UserStatus {
         Pending,
+        Submitted,
         Rejected,
-        Approved
+        Approved,
+        
     }
 
     @Id

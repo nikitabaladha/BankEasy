@@ -49,7 +49,7 @@ public class ProfileController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(), request.getAddress(), request.getPhoneNumber(), request.getCity(), request.getCountry(), request.getOccupation(),request.getZipCode(),request.getState(), request.getMaritalStatus(),request.getDateOfBirth(), request.getAccountType());
+            Profile profile = profileService.createProfile(user, request.getFirstName(),request.getLastName(),request.getDateOfBirth(), request.getPhoneNumber(),request.getAddress(), request.getCity(),request.getState(),request.getZipCode(),  request.getCountry(), request.getMaritalStatus(),request.getOccupation(), request.getAccountType());
             return new ResponseEntity<>(new ApiResponse<>(false, "Profile created successfully.", profile), HttpStatus.CREATED);
            } catch (DataIntegrityViolationException e) {
             // Unique key constraint violation, profile already exists
@@ -96,7 +96,7 @@ public class ProfileController {
             if (request.getMaritalStatus() != null) existingProfile.setMaritalStatus(request.getMaritalStatus());
             if (request.getOccupation() != null) existingProfile.setOccupation(request.getOccupation());
             if (request.getDateOfBirth() != null) existingProfile.setDateOfBirth(request.getDateOfBirth());
-            if (request.getAccountType() != null) existingProfile.setAccountType(request.getAccountType());
+//            if (request.getAccountType() != null) existingProfile.setAccountType(request.getAccountType());
 
             Profile updatedProfile = profileService.updateProfile(existingProfile);
 

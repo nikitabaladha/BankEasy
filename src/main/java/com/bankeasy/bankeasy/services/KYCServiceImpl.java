@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.entities.KYC;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.KYC.VerificationStatus;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.dao.KYCDao;
@@ -32,11 +33,24 @@ public class KYCServiceImpl implements KYCService {
     public KYC updateKYC(KYC kyc) {
         return kycDao.save(kyc);
     }
+//
+//    @Override
+//    public KYC getKYCByUserId(UUID userId) {
+//        return kycDao.findByUserId(userId);
+//    }
+    
+    
+    
 
     @Override
     public KYC getKYCByUserId(UUID userId) {
-        return kycDao.findByUserId(userId);
+        KYC kyc = kycDao.findByUserId(userId);
+
+        return kyc;
     }
+
+    
+   
 
     @Override
     public List<KYC> getAllKYCsByUserId(UUID userId) {

@@ -8,8 +8,8 @@ import com.bankeasy.bankeasy.entities.User;
 
 public interface ProfileService {
 	
-    Profile createProfile(User user, String firstName, String lastName, String address, String phoneNumber, String city, String state,
-                          String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType);
+    Profile createProfile(User user, String firstName, String lastName,LocalDate dateOfBirth, String phoneNumber, String address,  String city,String state,String zipCode, 
+                           String country, String maritalStatus, String occupation,   String accountType);
     
     Profile getProfileByUserId(UUID userId);
     

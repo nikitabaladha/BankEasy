@@ -17,9 +17,11 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileDao profileDao;
 
     @Override
-    public Profile createProfile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType) {
+    public Profile createProfile(User user, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber,String address,
+            String city, String state, String zipCode, String country, String maritalStatus, String occupation, String accountType) {
         
-        Profile profile = new Profile(user, firstName, lastName, address, phoneNumber, city, state, zipCode, country, maritalStatus, occupation, dateOfBirth,accountType);
+        Profile profile = new Profile(user, firstName, lastName, dateOfBirth,  phoneNumber, address,
+                city, state, zipCode,  country,  maritalStatus, occupation, accountType);
         return profileDao.save(profile);
     }
 
@@ -32,10 +34,6 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile getProfileByUserId(UUID userId) {
 
         Profile profile = profileDao.findByUserId(userId);
-
-        if (profile == null) {
-            throw new RuntimeException("Profile not found for user ID: " + userId);
-        }
 
         return profile;
     }

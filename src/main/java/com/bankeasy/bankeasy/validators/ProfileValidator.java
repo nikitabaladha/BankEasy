@@ -54,13 +54,6 @@ public class ProfileValidator {
     @NotBlank(message = "Account type is required")
     private String accountType;
 
-     public String getAccountType() {
-          return accountType;
-      }
-
-    public void setAccountType(String accountType) {
-          this.accountType = accountType;
-      }
 
     public String getFirstName() {
         return firstName;
@@ -77,6 +70,14 @@ public class ProfileValidator {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+    
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getAddress() {
         return address;
@@ -84,14 +85,6 @@ public class ProfileValidator {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public String getCity() {
@@ -149,4 +142,13 @@ public class ProfileValidator {
     public void setDateOfBirth(LocalDate dateOfBirth) { 
         this.dateOfBirth = dateOfBirth;
     }
+    
+    public String getAccountType() {
+        return accountType;
+    }
+
+  public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
 }

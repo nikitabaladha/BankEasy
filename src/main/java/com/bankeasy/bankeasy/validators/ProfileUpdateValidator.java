@@ -38,17 +38,17 @@ public class ProfileUpdateValidator {
 
     private LocalDate dateOfBirth;
 
-    private String accountType;
+//    private String accountType;
 
     // Getters and setters for all fields
 
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
+//    public String getAccountType() {
+//        return accountType;
+//    }
+//
+//    public void setAccountType(String accountType) {
+//        this.accountType = accountType;
+//    }
 
     public String getFirstName() {
         return firstName;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bankeasy.bankeasy.entities.KYC;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.KYCService;
@@ -24,8 +25,6 @@ import com.bankeasy.bankeasy.validators.KYCValidator;
 import jakarta.validation.Valid;
 
 import com.bankeasy.bankeasy.services.FileStorageService;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @RestController
 @RequestMapping("/api/kyc")
@@ -135,25 +134,54 @@ public class KYCController {
         }
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<ApiResponse<List<KYC>>> getAllKYCs() {
+//    @GetMapping("/get-all")
+//    public ResponseEntity<ApiResponse<List<KYC>>> getAllKYCs() {
+//        try {
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            String userIdStr = (String) authentication.getPrincipal();
+//            UUID userId = UUID.fromString(userIdStr);
+//
+//            User user = userService.findById(userId);
+//
+//            if (user == null) {
+//                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+//            }
+//
+//            List<KYC> kycs = kycService.getAllKYCsByUserId(userId);
+//            return new ResponseEntity<>(new ApiResponse<>(false, "KYCs retrieved successfully.", kycs), HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYCs: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+    
+    @GetMapping("/get")
+    public ResponseEntity<ApiResponse<KYC>> getKYC() {
         try {
+            // Retrieve authenticated user's details
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);
 
-            User user = userService.findById(userId);
+            // Fetch KYC details based on userId
+            KYC kyc = kycService.getKYCByUserId(userId);
+       
 
-            if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            if (kyc == null) {
+               
+                return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found for the user.", null), HttpStatus.OK);
             }
 
-            List<KYC> kycs = kycService.getAllKYCsByUserId(userId);
-            return new ResponseEntity<>(new ApiResponse<>(false, "KYCs retrieved successfully.", kycs), HttpStatus.OK);
+           
+            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+
         } catch (Exception e) {
+            // Handle unexpected errors
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYCs: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }  
     }
-}
+ 
+
 

@@ -1,3 +1,5 @@
+
+
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.Column;
@@ -19,9 +21,10 @@ import java.util.UUID;
 @Table(name = "profiles")
 public class Profile {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	 @Id
+	    @GeneratedValue(strategy = GenerationType.UUID)
+	    @Column(name = "id")  
+	    private UUID id;
 
     @Column(unique = true, nullable = false)
     private UUID userId;
@@ -30,40 +33,40 @@ public class Profile {
     @JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "first_name", nullable = false)  
     private String firstName;
     
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false) 
     private String lastName;
 
-    @Column(length = 10)
+    @Column(name = "phone_number", length = 10)  
     private String phoneNumber;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "address", columnDefinition = "TEXT")  
     private String address;
 
-    @Column(length = 100)
+    @Column(name = "city", length = 100)  
     private String city;
 
-    @Column(length = 100)
+    @Column(name = "state", length = 100)  
     private String state;
 
-    @Column(length = 20)
-    private String zipCode;
-
-    @Column(length = 100)
+    @Column(name = "country", length = 100) 
     private String country;
 
-    @Column(length = 20)
+    @Column(name = "zip_code", length = 20) 
+    private String zipCode;
+    
+    @Column(name = "marital_status", length = 20)  
     private String maritalStatus;
 
-    @Column(length = 100)
+    @Column(name = "occupation", length = 100)  
     private String occupation;
 
-    @Column(nullable = false)
+    @Column(name = "date_of_birth", nullable = false)  
     private LocalDate dateOfBirth; 
     
-    @Column(nullable = false)
+    @Column(name = "account_type", nullable = false)  
     private String accountType; 
 
     @Column(updatable = false, nullable = false)
@@ -76,13 +79,13 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(User user, String firstName,String lastName, String address, String phoneNumber, String city, String state, String zipCode, String country, String maritalStatus, String occupation, LocalDate dateOfBirth, String accountType) {
+    public Profile(User user, String firstName,String lastName, LocalDate dateOfBirth, String phoneNumber, String address,  String city, String state, String zipCode, String country, String maritalStatus, String occupation,  String accountType) {
         this.userId = user.getId();
         this.user = user;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.address = address;
         this.phoneNumber = phoneNumber;
+        this.address = address;      
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
@@ -121,20 +124,20 @@ public class Profile {
         this.lastName = lastName;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCity() {
@@ -210,7 +213,6 @@ public class Profile {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-	
+    }	
 }
+

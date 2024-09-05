@@ -1,7 +1,7 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.entities.KYC;
-
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 
 import java.util.List;
@@ -13,8 +13,10 @@ public interface KYCService {
     
     KYC updateKYC(KYC kyc);
     
-    KYC getKYCByUserId(UUID userId);
-    
     List<KYC> getAllKYCsByUserId(UUID userId);
+
+	KYC getKYCByUserId(UUID userId);
+	
+	 
 }
 
