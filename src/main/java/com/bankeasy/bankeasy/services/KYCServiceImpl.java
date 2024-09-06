@@ -39,4 +39,15 @@ public class KYCServiceImpl implements KYCService {
     public List<KYC> getAllKYCsByUserId(UUID userId) {
         return kycDao.findAllByUserId(userId);
     }
+
+	@Override
+	public KYC findByUserId(UUID id) {
+		return kycDao.findByUserId(id); 
+	}
+	
+	@Override
+    public KYC getApprovedKYCByUserId(UUID userId) {
+        return kycDao.findByUserIdAndVerified(userId, VerificationStatus.Approved).orElse(null);
+    }
 }
+

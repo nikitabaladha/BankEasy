@@ -15,6 +15,9 @@ public interface KYCService {
     List<KYC> getAllKYCsByUserId(UUID userId);
 
 	KYC getKYCByUserId(UUID userId);
-		 
+
+	KYC findByUserId(UUID id);	
+	
+	KYC getApprovedKYCByUserId(UUID userId); 
 }
 

@@ -21,7 +21,7 @@ public class KYC {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private UUID userId;
 
     @OneToOne
@@ -49,10 +49,8 @@ public class KYC {
     @UpdateTimestamp
     private Date updatedAt;
 
-    // Default constructor
     public KYC() {}
 
-    // Constructor for setting the values, with a check for null `verified` value
     public KYC(User user, String documentType, String documentNumber, String documentUrl, VerificationStatus verified) {
         this.userId = user.getId();
         this.user = user;
@@ -62,7 +60,6 @@ public class KYC {
         this.verified = (verified != null) ? verified : VerificationStatus.Pending;
     }
 
-    // Getters and setters
     public UUID getId() {
         return id;
     }
@@ -121,7 +118,5 @@ public class KYC {
 
     public void setDocumentUrl(String documentUrl) {
         this.documentUrl = documentUrl;
-    }
-
-   
+    } 
 }
