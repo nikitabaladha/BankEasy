@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankeasy.bankeasy.entities.Beneficiary;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.BeneficiaryService;
 import com.bankeasy.bankeasy.services.UserService;
+import com.bankeasy.bankeasy.validators.BeneficiaryUpdateValidator;
 import com.bankeasy.bankeasy.validators.BeneficiaryValidator;
-
+import com.bankeasy.bankeasy.validators.ProfileUpdateValidator;
 
 import jakarta.validation.Valid;
 
@@ -39,10 +42,9 @@ public class BeneficiaryController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Beneficiary>> createBeneficiary(@Valid @RequestBody BeneficiaryValidator request, BindingResult result) {
         try {
-            if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+        	if (result.hasErrors()) { 
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,6 +56,7 @@ public class BeneficiaryController {
             }
 
             Beneficiary beneficiary = beneficiaryService.create(user, request.getName(), request.getBankName(), request.getAccountNumber(), request.getIfscCode());
+           
             return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiary created successfully.", beneficiary), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,51 +64,85 @@ public class BeneficiaryController {
         }
     }
     
-    @PutMapping("/update")
-    public ResponseEntity<ApiResponse<Beneficiary>> updateBeneficiary(@Valid @RequestBody BeneficiaryValidator request, BindingResult result) {
+    @PutMapping("/update/{beneficiaryId}")
+    public ResponseEntity<ApiResponse<Beneficiary>> updateBeneficiary(
+            @PathVariable UUID beneficiaryId,
+            @Valid @RequestBody BeneficiaryUpdateValidator request, 
+            BindingResult result) {
+        
         try {
+            
             if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
+                String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);
-
             User user = userService.findById(userId);
+            
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            Beneficiary updatedBeneficiary = beneficiaryService.updateBeneficiaryByUserId(userId, request.getName(), request.getBankName(), request.getAccountNumber(), request.getIfscCode());
-
-            if (updatedBeneficiary == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Beneficiary not found for the user.", null), HttpStatus.NOT_FOUND);
+            Beneficiary existingBeneficiary = beneficiaryService.getBeneficiaryById(beneficiaryId);
+            
+            if (existingBeneficiary == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Beneficiary not found.", null), HttpStatus.NOT_FOUND);
             }
+
+            if (request.getName() != null) existingBeneficiary.setName(request.getName());
+            if (request.getBankName() != null) existingBeneficiary.setBankName(request.getBankName());
+            if (request.getAccountNumber() != null) existingBeneficiary.setAccountNumber(request.getAccountNumber());
+            if (request.getIfscCode() != null) existingBeneficiary.setIfscCode(request.getIfscCode());
+
+            Beneficiary updatedBeneficiary = beneficiaryService.updateBeneficiaryById(existingBeneficiary);
 
             return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiary updated successfully.", updatedBeneficiary), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update beneficiary: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update Beneficiary: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    
+    @GetMapping("/get/{beneficiaryId}")
+    public ResponseEntity<ApiResponse<Beneficiary>> getBeneficiary(@PathVariable UUID beneficiaryId) {
+        try {
+            // Retrieve the beneficiary using the ID from the path
+            Beneficiary beneficiary = beneficiaryService.getBeneficiaryById(beneficiaryId);
 
+            if (beneficiary == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Beneficiary not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiary retrieved successfully.", beneficiary), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve Beneficiary: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse<List<Beneficiary>>> getAllBeneficiaries() {
         try {
+            // Get the authenticated user's ID from the security context
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);
 
+            // Retrieve the user to ensure they exist
             User user = userService.findById(userId);
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
+            // Fetch all beneficiaries associated with the user
             List<Beneficiary> beneficiaries = beneficiaryService.getAllBeneficiariesByUserId(userId);
+
+            // Return the list of beneficiaries if found
             return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiaries retrieved successfully.", beneficiaries), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

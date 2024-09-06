@@ -34,9 +34,7 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Profile>> createProfile(@Valid @RequestBody ProfileValidator request, BindingResult result) {
         try {
-        	
-        	if (result.hasErrors()) {
-                
+        	if (result.hasErrors()) { 
                 String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
                 return new ResponseEntity<>(new ApiResponse<>(true, errorMessage, null), HttpStatus.BAD_REQUEST);
             }

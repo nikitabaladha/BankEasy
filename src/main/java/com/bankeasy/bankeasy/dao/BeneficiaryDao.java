@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BeneficiaryDao extends JpaRepository<Beneficiary, UUID> {
-    Beneficiary findByUserId(UUID userId);
-  
-    List<Beneficiary> findAllByUserId(UUID userId);
+	List<Beneficiary> findAllByUserId(UUID userId);
+    
 }
+
 
 
 

@@ -8,12 +8,9 @@ import java.util.UUID;
 public interface BeneficiaryService {
     Beneficiary create(User user, String name, String bankName, String accountNumber, String ifscCode);
     
-    Beneficiary updateBeneficiaryByUserId(UUID userId, String name, String bankName, String accountNumber, String ifscCode);
+    Beneficiary updateBeneficiaryById(Beneficiary existingBeneficiary);
     
-    Beneficiary getBeneficiaryByUserId(UUID userId);
+    Beneficiary getBeneficiaryById(UUID beneficiaryId);
     
     List<Beneficiary> getAllBeneficiariesByUserId(UUID userId);
-    
-    Beneficiary findByUserId(UUID userId);
-    
 }
