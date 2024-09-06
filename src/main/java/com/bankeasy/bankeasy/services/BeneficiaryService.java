@@ -13,4 +13,9 @@ public interface BeneficiaryService {
     Beneficiary getBeneficiaryById(UUID beneficiaryId);
     
     List<Beneficiary> getAllBeneficiariesByUserId(UUID userId);
+    
+    List<Beneficiary> getActiveBeneficiariesByUserId(UUID userId);
+    
+    Beneficiary softDeleteBeneficiaryById(UUID beneficiaryId);
+       
 }

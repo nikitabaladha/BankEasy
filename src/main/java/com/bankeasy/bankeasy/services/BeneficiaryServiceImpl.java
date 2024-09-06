@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.entities.Beneficiary;
-import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.dao.BeneficiaryDao;
 
@@ -37,5 +36,20 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     public List<Beneficiary> getAllBeneficiariesByUserId(UUID userId) {
         return beneficiaryDao.findAllByUserId(userId);
+    }
+    
+    @Override
+    public List<Beneficiary> getActiveBeneficiariesByUserId(UUID userId) {
+        return beneficiaryDao.findAllByUserIdAndStatus(userId, Beneficiary.BeneficiaryStatus.Active);
+    }
+    
+    @Override
+    public Beneficiary softDeleteBeneficiaryById(UUID beneficiaryId) {
+        Beneficiary beneficiary = beneficiaryDao.findById(beneficiaryId).orElse(null);
+        if (beneficiary != null) {
+            beneficiary.setStatus(Beneficiary.BeneficiaryStatus.Inactive);
+            return beneficiaryDao.save(beneficiary);
+        }
+        return null;
     }
 }

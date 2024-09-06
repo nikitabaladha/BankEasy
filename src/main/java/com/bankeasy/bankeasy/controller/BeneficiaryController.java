@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankeasy.bankeasy.entities.Beneficiary;
-import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.BeneficiaryService;
 import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.BeneficiaryUpdateValidator;
 import com.bankeasy.bankeasy.validators.BeneficiaryValidator;
-import com.bankeasy.bankeasy.validators.ProfileUpdateValidator;
 
 import jakarta.validation.Valid;
 
@@ -135,21 +134,51 @@ public class BeneficiaryController {
 
             // Retrieve the user to ensure they exist
             User user = userService.findById(userId);
+            
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
-            // Fetch all beneficiaries associated with the user
-            List<Beneficiary> beneficiaries = beneficiaryService.getAllBeneficiariesByUserId(userId);
+            // Fetch all active beneficiaries associated with the user
+            List<Beneficiary> beneficiaries = beneficiaryService.getActiveBeneficiariesByUserId(userId);
 
             // Return the list of beneficiaries if found
-            return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiaries retrieved successfully.", beneficiaries), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Active beneficiaries retrieved successfully.", beneficiaries), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve beneficiaries: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
-   
+    @DeleteMapping("/delete/{beneficiaryId}")
+    public ResponseEntity<ApiResponse<Beneficiary>> softDeleteBeneficiary(@PathVariable UUID beneficiaryId) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
+            
+            User user = userService.findById(userId);
+            
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+            }
 
+            Beneficiary existingBeneficiary = beneficiaryService.getBeneficiaryById(beneficiaryId);
+            
+            if (existingBeneficiary == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Beneficiary not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            Beneficiary updatedBeneficiary = beneficiaryService.softDeleteBeneficiaryById(beneficiaryId);
+            
+            if (updatedBeneficiary == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update beneficiary status.", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Beneficiary status updated to INACTIVE.", updatedBeneficiary), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update beneficiary status: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
