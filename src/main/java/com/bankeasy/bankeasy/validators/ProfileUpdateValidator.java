@@ -1,5 +1,6 @@
 package com.bankeasy.bankeasy.validators;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -37,18 +38,6 @@ public class ProfileUpdateValidator {
     private String occupation;
 
     private LocalDate dateOfBirth;
-
-//    private String accountType;
-
-    // Getters and setters for all fields
-
-//    public String getAccountType() {
-//        return accountType;
-//    }
-//
-//    public void setAccountType(String accountType) {
-//        this.accountType = accountType;
-//    }
 
     public String getFirstName() {
         return firstName;

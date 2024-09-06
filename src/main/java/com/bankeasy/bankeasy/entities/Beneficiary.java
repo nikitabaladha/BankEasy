@@ -38,7 +38,7 @@ public class Beneficiary {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private BeneficiaryStatus status = BeneficiaryStatus.ACTIVE;
+    private BeneficiaryStatus status = BeneficiaryStatus.Active;
     
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -58,7 +58,7 @@ public class Beneficiary {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
         this.ifscCode = ifscCode;
-        this.status = BeneficiaryStatus.ACTIVE;
+        this.status = BeneficiaryStatus.Active;
     }
 
     public UUID getId() {
@@ -114,8 +114,8 @@ public class Beneficiary {
     }
     
     public enum BeneficiaryStatus {
-        ACTIVE,
-        INACTIVE
+        Active,
+        Inactive
     }
     
     public Date getCreatedAt() { return createdAt; }

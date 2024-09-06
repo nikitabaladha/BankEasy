@@ -13,10 +13,5 @@ public interface ProfileService {
     
     Profile getProfileByUserId(UUID userId);
     
-
 	Profile updateProfile(Profile existingProfile);
-
-	
-     
-    // void deleteProfile(Profile profile);
 }

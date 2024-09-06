@@ -122,4 +122,6 @@ public class KYC {
     public void setDocumentUrl(String documentUrl) {
         this.documentUrl = documentUrl;
     }
+
+   
 }

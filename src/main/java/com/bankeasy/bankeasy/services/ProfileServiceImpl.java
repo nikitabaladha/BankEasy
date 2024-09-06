@@ -22,6 +22,7 @@ public class ProfileServiceImpl implements ProfileService {
         
         Profile profile = new Profile(user, firstName, lastName, dateOfBirth,  phoneNumber, address,
                 city, state, zipCode,  country,  maritalStatus, occupation, accountType);
+        
         return profileDao.save(profile);
     }
 
@@ -38,11 +39,6 @@ public class ProfileServiceImpl implements ProfileService {
         return profile;
     }
 
-    // @Override
-    // public void deleteProfile(Profile profile) {
-    // profile.setProfileStatus("Deleted");
-    // profileDao.save(profile);
-    //
-    // }
+  
 }
 

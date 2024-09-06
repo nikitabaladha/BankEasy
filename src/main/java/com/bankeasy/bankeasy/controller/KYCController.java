@@ -1,6 +1,5 @@
 package com.bankeasy.bankeasy.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bankeasy.bankeasy.entities.KYC;
-import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.KYCService;
@@ -69,12 +67,11 @@ public class KYCController {
             if (file != null && !file.isEmpty()) {
                 // Store the uploaded file
                 String fileName = fileStorageService.storeFile(file);
-                fileUrl = "/uploads/" + fileName;
+                fileUrl = "/" + fileName;
             } else {
                 return new ResponseEntity<>(new ApiResponse<>(true, "File is required.", null), HttpStatus.BAD_REQUEST);
             }
 
-           
             KYC kyc = kycService.createKYC(user, request.getDocumentType(), request.getDocumentNumber(), fileUrl);
 
             return new ResponseEntity<>(new ApiResponse<>(false, "KYC created successfully.", kyc), HttpStatus.CREATED);
@@ -117,13 +114,13 @@ public class KYCController {
             if (request.getDocumentNumber() != null) existingKYC.setDocumentNumber(request.getDocumentNumber());
 
             // Handle file upload if a new file is provided
-            String fileUrl = existingKYC.getDocumentUrl(); // Keep the old URL if no new file is uploaded
+            String fileUrl = existingKYC.getDocumentUrl(); 
             if (file != null && !file.isEmpty()) {
                 // Store the new file
                 String fileName = fileStorageService.storeFile(file);
-                fileUrl = "/uploads/" + fileName; // Update with new file URL
+                fileUrl = "/uploads/" + fileName; 
             }
-            existingKYC.setDocumentUrl(fileUrl); // Update KYC with the new file URL
+            existingKYC.setDocumentUrl(fileUrl); 
 
             KYC updatedKYC = kycService.updateKYC(existingKYC);
 
@@ -133,55 +130,33 @@ public class KYCController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-//    @GetMapping("/get-all")
-//    public ResponseEntity<ApiResponse<List<KYC>>> getAllKYCs() {
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            String userIdStr = (String) authentication.getPrincipal();
-//            UUID userId = UUID.fromString(userIdStr);
-//
-//            User user = userService.findById(userId);
-//
-//            if (user == null) {
-//                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
-//            }
-//
-//            List<KYC> kycs = kycService.getAllKYCsByUserId(userId);
-//            return new ResponseEntity<>(new ApiResponse<>(false, "KYCs retrieved successfully.", kycs), HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYCs: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
     
     @GetMapping("/get")
     public ResponseEntity<ApiResponse<KYC>> getKYC() {
         try {
-            // Retrieve authenticated user's details
+            
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
             UUID userId = UUID.fromString(userIdStr);
-
-            // Fetch KYC details based on userId
+        
             KYC kyc = kycService.getKYCByUserId(userId);
        
-
             if (kyc == null) {
                
                 return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found for the user.", null), HttpStatus.OK);
             }
-
-           
-            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+            
+           return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
 
         } catch (Exception e) {
-            // Handle unexpected errors
+           
             e.printStackTrace();
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }  
-    }
+       
+}
+    
  
 
 

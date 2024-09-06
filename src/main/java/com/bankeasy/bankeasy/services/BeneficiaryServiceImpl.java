@@ -18,9 +18,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     public Beneficiary create(User user, String name, String bankName, String accountNumber, String ifscCode) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
+//        if (user == null) {
+//            throw new IllegalArgumentException("User cannot be null");
+//        }
 
         Beneficiary beneficiary = new Beneficiary(user, name, bankName, accountNumber, ifscCode);
         return beneficiaryDao.save(beneficiary);
@@ -29,9 +29,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     public Beneficiary updateBeneficiaryByUserId(UUID userId, String name, String bankName, String accountNumber, String ifscCode) {
         Beneficiary beneficiary = beneficiaryDao.findByUserId(userId);
-        if (beneficiary == null) {
-            throw new IllegalArgumentException("Beneficiary not found for userId: " + userId);
-        }
+//        if (beneficiary == null) {
+//            throw new IllegalArgumentException("Beneficiary not found for userId: " + userId);
+//        }
      
         beneficiary.setName(name);
         beneficiary.setBankName(bankName);
