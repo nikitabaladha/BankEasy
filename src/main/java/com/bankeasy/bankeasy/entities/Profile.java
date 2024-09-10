@@ -22,9 +22,9 @@ import java.util.UUID;
 public class Profile {
 
 	 @Id
-	    @GeneratedValue(strategy = GenerationType.UUID)
-	    @Column(name = "id")  
-	    private UUID id;
+	 @GeneratedValue(strategy = GenerationType.UUID)
+	 @Column(name = "id")  
+	 private UUID id;
 
     @Column(unique = true, nullable = false)
     private UUID userId;
