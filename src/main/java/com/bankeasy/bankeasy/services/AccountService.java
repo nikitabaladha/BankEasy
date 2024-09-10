@@ -4,6 +4,7 @@ import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.User;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AccountService {
@@ -12,4 +13,7 @@ public interface AccountService {
     Account getAccountByUserId(UUID userId);
     void deleteAccount(Account account);
     Account findByUserId(UUID userId);
+    
+//    New
+    Optional<Account> findByAccountNumber(String accountNumber);
 }

@@ -24,7 +24,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable UUID id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal(); // Get userId from authentication
+        String userId = (String) authentication.getPrincipal(); 
 
         User user = userService.findById(UUID.fromString(userId));
         if (user == null || !user.getId().equals(id)) {

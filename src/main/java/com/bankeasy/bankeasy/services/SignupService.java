@@ -1,6 +1,4 @@
-
 package com.bankeasy.bankeasy.services;
-
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.validators.SignupValidator;
 

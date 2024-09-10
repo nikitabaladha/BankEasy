@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -53,9 +54,6 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
-   
 
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountUpdateValidator request, BindingResult result) {
@@ -107,6 +105,26 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+//    New
+    
+    @GetMapping("/find/{accountNumber}")
+    public ResponseEntity<ApiResponse<Account>> findAccountByAccountNumber(@PathVariable String accountNumber) {
+        try {
+            Optional<Account> accountOptional = accountService.findByAccountNumber(accountNumber);
+
+            if (accountOptional.isPresent()) {
+                return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", accountOptional.get()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found.", null), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+//    ==========================
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse<String>> deleteAccount() {
