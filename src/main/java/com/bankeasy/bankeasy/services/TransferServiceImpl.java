@@ -43,7 +43,7 @@ public class TransferServiceImpl implements TransferService {
             .orElseThrow(() -> new RuntimeException("Beneficiary not found for ID: " + beneficiaryId));
         
         // Create and save the transfer
-        Transfer transfer = new Transfer(user, beneficiaryId, amount, remark);
+        Transfer transfer = new Transfer(user, beneficiaryId, amount, remark, Transfer.TransferStatus.Active);
         Transfer savedTransfer = transferDao.save(transfer);
 
         // Create debit transaction for the sender

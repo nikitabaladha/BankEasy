@@ -10,11 +10,17 @@ import java.util.UUID;
 @Entity
 @Table(name = "transactions")
 public class Transaction {
-	
+
+    public enum TransactionStatus {
+        Settled,
+        Pending,
+        Returned
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    
+
     @Column(nullable = false)
     private UUID userId;
 
@@ -52,9 +58,16 @@ public class Transaction {
     @UpdateTimestamp
     private Date updatedAt;
 
-    public Transaction() {}
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionStatus status = TransactionStatus.Settled;
 
-    // Constructor with transferId field
+    public Transaction() {
+        this.status = TransactionStatus.Settled; 
+    }
+
+   
     public Transaction(User user, BigDecimal amount, TransactionType transactionType, String description, Transfer transfer) {
         this.userId = user.getId();
         this.user = user;
@@ -62,9 +75,11 @@ public class Transaction {
         this.transactionType = transactionType;
         this.description = description;
         this.transfer = transfer;
-        this.transferId = transfer.getId();
+        this.transferId = transfer != null ? transfer.getId() : null;
+        this.status = TransactionStatus.Settled; 
     }
 
+    // Getters and Setters
     public UUID getId() { return id; }
 
     public void setId(UUID id) { this.id = id; }
@@ -91,4 +106,7 @@ public class Transaction {
 
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
+    public TransactionStatus getStatus() { return status; }
+    public void setStatus(TransactionStatus status) { this.status = status; }
 }

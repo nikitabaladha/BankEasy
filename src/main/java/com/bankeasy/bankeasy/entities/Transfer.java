@@ -1,16 +1,20 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
-
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "transfers")
 public class Transfer {
+
+    public enum TransferStatus {
+        Active,
+        Pending,
+        Returned
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,7 +25,7 @@ public class Transfer {
     private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "useId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @Column(name = "beneficiary_id", nullable = false)
@@ -41,18 +45,27 @@ public class Transfer {
     @CreationTimestamp
     private Date createdAt;
 
+    // Add the status field using the enum and set the default value to Active
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private TransferStatus status = TransferStatus.Active;
+
+    // Default constructor
     public Transfer() {
+        this.status = TransferStatus.Active;  // Set default status to Active
     }
 
-    public Transfer(User user, UUID beneficiaryId, BigDecimal amount, String remark) {
-    	
-    	 this.userId = user.getId();
+    // Constructor with all fields
+    public Transfer(User user, UUID beneficiaryId, BigDecimal amount, String remark, TransferStatus status) {
+        this.userId = user.getId();
         this.user = user;
         this.beneficiaryId = beneficiaryId;
         this.amount = amount;
         this.remark = remark;
+        this.status = status != null ? status : TransferStatus.Active;  // Default to Active if null
     }
 
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -101,5 +114,11 @@ public class Transfer {
         this.createdAt = createdAt;
     }
 
-}
+    public TransferStatus getStatus() {
+        return status;
+    }
 
+    public void setStatus(TransferStatus status) {
+        this.status = status;
+    }
+}

@@ -29,31 +29,6 @@ public class TransactionController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Transaction>> createTransaction(@Valid @RequestBody TransactionValidator request, BindingResult result) {
-        try {
-            if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
-            }
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userId = (String) authentication.getPrincipal();
-            User user = userService.findById(UUID.fromString(userId));
-
-            if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
-            }
-
-            Transaction transaction = transactionService.createTransaction(user, request.getAmount(), request.getTransactionType(), request.getDescription());
-            return new ResponseEntity<>(new ApiResponse<>(false, "Transaction created successfully.", transaction), HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse<List<Transaction>>> getAllTransactions() {
         try {
