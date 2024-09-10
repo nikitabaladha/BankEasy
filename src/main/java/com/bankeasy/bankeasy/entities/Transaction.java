@@ -3,6 +3,9 @@ package com.bankeasy.bankeasy.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
@@ -23,8 +26,10 @@ public class Transaction {
 
     @Column(nullable = false)
     private UUID userId;
-
-    @ManyToOne
+    
+  
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
     private User user;
 
@@ -79,6 +84,7 @@ public class Transaction {
         this.status = TransactionStatus.Settled; 
     }
 
+
     // Getters and Setters
     public UUID getId() { return id; }
 
@@ -97,9 +103,6 @@ public class Transaction {
 
     public UUID getTransferId() { return transferId; }
     public void setTransferId(UUID transferId) { this.transferId = transferId; }
-
-    public Transfer getTransfer() { return transfer; }
-    public void setTransfer(Transfer transfer) { this.transfer = transfer; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }

@@ -8,6 +8,8 @@ import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.TransactionValidator;
 
 import jakarta.validation.Valid;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,7 @@ public class TransactionController {
             }
 
             List<Transaction> transactions = transactionService.getAllTransactionsByUserId(userId);
+//            transactions.forEach(transaction -> Hibernate.initialize(transaction.getTransfer()));
             return new ResponseEntity<>(new ApiResponse<>(false, "Transactions retrieved successfully.", transactions), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,36 +70,5 @@ public class TransactionController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PutMapping("/update/{transactionId}")
-    public ResponseEntity<ApiResponse<Transaction>> updateTransaction(@PathVariable UUID transactionId,
-                                                                      @Valid @RequestBody TransactionValidator transactionValidator, BindingResult result) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userId = (String) authentication.getPrincipal();
-            User user = userService.findById(UUID.fromString(userId));
-
-            if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
-            }
-
-            if (result.hasErrors()) {
-                StringBuilder errorMessage = new StringBuilder();
-                result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append(" "));
-                return new ResponseEntity<>(new ApiResponse<>(true, errorMessage.toString().trim(), null), HttpStatus.BAD_REQUEST);
-            }
-
-            Transaction updatedTransaction = transactionService.updateTransactionByTransactionId(
-                    transactionId,
-                    transactionValidator.getAmount(),
-                    transactionValidator.getTransactionType(),
-                    transactionValidator.getDescription()
-            );
-
-            return new ResponseEntity<>(new ApiResponse<>(false, "Transaction updated successfully.", updatedTransaction), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+   
 }

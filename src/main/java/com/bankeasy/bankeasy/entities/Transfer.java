@@ -4,8 +4,16 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
+
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "transfers")
 public class Transfer {
@@ -24,13 +32,24 @@ public class Transfer {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @Column(name = "beneficiary_id", nullable = false)
     private UUID beneficiaryId;
+    
+    public void initialize() {
+	       if (user != null) {
+	           Hibernate.initialize(user);
+     }
+	        if (beneficiary != null) {
+	            Hibernate.initialize(beneficiary);
+	       }
+	    }
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiary_id", insertable = false, updatable = false)
     private Beneficiary beneficiary;
@@ -121,4 +140,6 @@ public class Transfer {
     public void setStatus(TransferStatus status) {
         this.status = status;
     }
+    
+   
 }

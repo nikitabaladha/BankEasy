@@ -8,6 +8,8 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonIgnoreProperties({"transactions", "user"})
 @Entity
 @Table(name = "beneficiaries")
 public class Beneficiary {
