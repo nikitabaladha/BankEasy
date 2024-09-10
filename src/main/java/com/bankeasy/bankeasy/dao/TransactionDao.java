@@ -9,6 +9,3 @@ public interface TransactionDao extends JpaRepository<Transaction, UUID> {
 	
     List<Transaction> findAllByUserId(UUID userId); 
 }
-
-
-

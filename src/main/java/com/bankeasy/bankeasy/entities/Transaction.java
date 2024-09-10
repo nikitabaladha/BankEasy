@@ -1,19 +1,8 @@
 package com.bankeasy.bankeasy.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
@@ -37,9 +26,8 @@ public class Transaction {
     private BigDecimal amount;
 
     public enum TransactionType {
-        Deposite,
-        Withdrawal,
-        Transfer
+        Debit,
+        Credit,
     }
 
     @Enumerated(EnumType.STRING)
@@ -48,6 +36,13 @@ public class Transaction {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "transfer_id")
+    private UUID transferId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transfer_id", insertable = false, updatable = false)
+    private Transfer transfer;
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -59,12 +54,15 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(User user, BigDecimal amount, TransactionType transactionType, String description) {
+    // Constructor with transferId field
+    public Transaction(User user, BigDecimal amount, TransactionType transactionType, String description, Transfer transfer) {
         this.userId = user.getId();
         this.user = user;
         this.amount = amount;
         this.transactionType = transactionType;
         this.description = description;
+        this.transfer = transfer;
+        this.transferId = transfer.getId();
     }
 
     public UUID getId() { return id; }
@@ -81,6 +79,12 @@ public class Transaction {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public UUID getTransferId() { return transferId; }
+    public void setTransferId(UUID transferId) { this.transferId = transferId; }
+
+    public Transfer getTransfer() { return transfer; }
+    public void setTransfer(Transfer transfer) { this.transfer = transfer; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }

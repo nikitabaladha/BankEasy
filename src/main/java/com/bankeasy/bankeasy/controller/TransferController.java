@@ -4,7 +4,7 @@ import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.Transfer;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
-import com.bankeasy.bankeasy.services.AccountService; // Assume you have this service
+import com.bankeasy.bankeasy.services.AccountService; 
 import com.bankeasy.bankeasy.services.TransferService;
 import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.TransferValidator;
@@ -49,8 +49,7 @@ public class TransferController {
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
-
-        
+  
             Account account = accountService.findByUserId(user.getId());
 
             if (account == null) {
