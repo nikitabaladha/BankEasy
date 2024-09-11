@@ -34,6 +34,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/profiles/**").authenticated()
                     .requestMatchers("/api/beneficiaries/**").authenticated()
                     .requestMatchers("/api/transactions/**").authenticated()
+                    .requestMatchers("/api/transfers/**").authenticated()
                     .requestMatchers("/api/kyc/**").authenticated()
                     
                    
