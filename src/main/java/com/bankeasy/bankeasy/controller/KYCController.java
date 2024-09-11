@@ -1,5 +1,6 @@
 package com.bankeasy.bankeasy.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,6 @@ public class KYCController {
         this.userService = userService;
         this.fileStorageService = fileStorageService;
     }
-
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResponse<KYC>> createKYC(
             @Valid @ModelAttribute KYCValidator request,
@@ -158,8 +158,8 @@ public class KYCController {
         }
     }
     
-    @GetMapping("/get")
-    public ResponseEntity<ApiResponse<KYC>> getKYC() {
+    @GetMapping("/get-approved")
+    public ResponseEntity<ApiResponse<KYC>> getApprovedKYC() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
@@ -177,6 +177,27 @@ public class KYCController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/get")
+    public ResponseEntity<ApiResponse<KYC>> getKYC() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            UUID userId = UUID.fromString(userIdStr);
+
+            KYC kyc = kycService.getKYCByUserId(userId);
+
+            if (kyc == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Approved KYC not found for the user.", null), HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
     
  

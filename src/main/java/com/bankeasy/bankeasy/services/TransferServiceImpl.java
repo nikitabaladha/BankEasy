@@ -64,7 +64,7 @@ public class TransferServiceImpl implements TransferService {
 
         // Create debit transaction for the sender
         String debitDescription = "Transfer to " + beneficiary.getName();
-        Transaction debitTransaction = new Transaction(user, amount, TransactionType.Debit, debitDescription, savedTransfer);
+        Transaction debitTransaction = new Transaction(user.getId(), amount, TransactionType.Debit, debitDescription, savedTransfer);
         transactionDao.save(debitTransaction);
 
         // Use the userId from the Beneficiary to get the User
@@ -91,7 +91,7 @@ public class TransferServiceImpl implements TransferService {
 
         // Create credit transaction for the beneficiary
         String creditDescription = "Transfer from " + user.getFirstName();
-        Transaction creditTransaction = new Transaction(beneficiaryUser, amount, TransactionType.Credit, creditDescription, savedTransfer);
+        Transaction creditTransaction = new Transaction(beneficiaryAccount.getUserId(), amount, TransactionType.Credit, creditDescription, savedTransfer);
         transactionDao.save(creditTransaction);
 
         return savedTransfer;
