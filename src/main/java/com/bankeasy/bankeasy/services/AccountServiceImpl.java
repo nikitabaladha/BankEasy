@@ -2,6 +2,7 @@ package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.dao.AccountDao;
 import com.bankeasy.bankeasy.dao.ProfileDao;
+import com.bankeasy.bankeasy.dao.UserDao;
 import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
@@ -13,7 +14,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
+
+
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -23,6 +25,9 @@ public class AccountServiceImpl implements AccountService {
     
     @Autowired
     private ProfileDao profileDao;
+    
+    @Autowired
+    private UserDao userDao;
 	
     @Override
     public Account createAccount(User user) {
@@ -79,6 +84,8 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAllAccounts() {
         return accountDao.findAll();
     }
+    
+  
 
 	
 }
