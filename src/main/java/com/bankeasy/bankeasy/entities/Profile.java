@@ -1,5 +1,3 @@
-
-
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.Column;

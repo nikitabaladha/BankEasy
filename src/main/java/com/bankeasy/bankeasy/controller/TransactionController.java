@@ -173,10 +173,10 @@ public class TransactionController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve transaction: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-//    get transactions by type
+     
+
     @GetMapping("/by-type/{transactionType}")
-    public ResponseEntity<ApiResponse<List<Transaction>>> getTransactionsByType(@PathVariable TransactionType transactionType) {
+    public ResponseEntity<ApiResponse<List<Transaction>>> getTransactionsByType(@PathVariable String transactionType) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userIdStr = (String) authentication.getPrincipal();
@@ -187,8 +187,17 @@ public class TransactionController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
             }
 
+            // Convert the incoming transactionType to match the enum case
+            Transaction.TransactionType type;
+            try {
+                type = Transaction.TransactionType.valueOf(transactionType.substring(0, 1).toUpperCase() + transactionType.substring(1).toLowerCase());
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Invalid transaction type.", null), HttpStatus.BAD_REQUEST);
+            }
+
+            // Fetch transactions and filter by the correct transaction type
             List<Transaction> transactions = transactionService.getAllTransactionsByUserId(userId);
-            transactions.removeIf(transaction -> !transaction.getTransactionType().equals(transactionType));
+            transactions.removeIf(transaction -> !transaction.getTransactionType().equals(type));
 
             return new ResponseEntity<>(new ApiResponse<>(false, "Transactions retrieved successfully.", transactions), HttpStatus.OK);
         } catch (Exception e) {
@@ -196,9 +205,8 @@ public class TransactionController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve transactions: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-   
-}
 
+}
 
 
 

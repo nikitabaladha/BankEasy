@@ -1,6 +1,7 @@
  package com.bankeasy.bankeasy.services;
 
-import java.time.LocalDate;  
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import com.bankeasy.bankeasy.entities.Profile;
@@ -14,4 +15,10 @@ public interface ProfileService {
     Profile getProfileByUserId(UUID userId);
     
 	Profile updateProfile(Profile existingProfile);
+	
+	//	Admin service
+	
+	List<Profile> getAllProfiles();
+
+	Profile getProfileByserId(UUID userId);
 }

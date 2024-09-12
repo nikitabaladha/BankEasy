@@ -1,7 +1,6 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Profile;
-
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.ProfileService;
@@ -10,6 +9,7 @@ import com.bankeasy.bankeasy.validators.ProfileUpdateValidator;
 import com.bankeasy.bankeasy.validators.ProfileValidator;
 
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -127,6 +128,62 @@ public class ProfileController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve profile: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+//    Admin Apis
+    
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<Profile>>> getAllProfiles() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User user = userService.findById(UUID.fromString(userIdStr));
+
+            if (user == null || !user.getRole().equals("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view all profiles.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get all profiles
+            List<Profile> profiles = profileService.getAllProfiles();
+
+            // Filter out the admin's own profile
+            profiles.removeIf(profile -> profile.getUserId().equals(user.getId()));
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Profiles retrieved successfully.", profiles), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve profiles: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/get/{userId}")
+    public ResponseEntity<ApiResponse<Profile>> getProfile(@PathVariable UUID userId) {
+        try {
+            // Get the currently authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User authenticatedUser = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view profiles.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the profile of the user by userId
+            Profile profile = profileService.getProfileByUserId(userId);
+
+            // Check if the profile exists
+            if (profile == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Profile not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Profile retrieved successfully.", profile), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve Profile: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
 }
 
 

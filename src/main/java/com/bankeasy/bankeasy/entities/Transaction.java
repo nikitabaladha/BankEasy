@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.bankeasy.bankeasy.entities.Transfer.TransferStatus;
+//import com.bankeasy.bankeasy.entities.Transfer.TransferStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;

@@ -5,6 +5,7 @@ import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,16 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = profileDao.findByUserId(userId);
 
         return profile;
+    }
+
+    @Override
+    public List<Profile> getAllProfiles() {  
+        return profileDao.findAll();
+    }
+
+    @Override
+    public Profile getProfileByserId(UUID userId) {
+        return getProfileByUserId(userId);  
     }
 
   

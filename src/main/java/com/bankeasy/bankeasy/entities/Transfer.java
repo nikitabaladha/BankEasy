@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.entities;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
@@ -9,8 +10,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -64,27 +63,23 @@ public class Transfer {
     @CreationTimestamp
     private Date createdAt;
 
-    // Add the status field using the enum and set the default value to Active
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private TransferStatus status = TransferStatus.Active;
 
-    // Default constructor
     public Transfer() {
-        this.status = TransferStatus.Active;  // Set default status to Active
+        this.status = TransferStatus.Active;  
     }
 
-    // Constructor with all fields
     public Transfer(User user, UUID beneficiaryId, BigDecimal amount, String remark, TransferStatus status) {
         this.userId = user.getId();
         this.user = user;
         this.beneficiaryId = beneficiaryId;
         this.amount = amount;
         this.remark = remark;
-        this.status = status != null ? status : TransferStatus.Active;  // Default to Active if null
+        this.status = status != null ? status : TransferStatus.Active;
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -140,6 +135,4 @@ public class Transfer {
     public void setStatus(TransferStatus status) {
         this.status = status;
     }
-    
-   
 }

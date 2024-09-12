@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bankeasy.bankeasy.entities.KYC;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.KYCService;
@@ -189,6 +190,36 @@ public class KYCController {
 
             if (kyc == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Approved KYC not found for the user.", null), HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+//    Admin 
+    
+    @GetMapping("/get/{userId}")
+    public ResponseEntity<ApiResponse<KYC>> getKYC(@PathVariable UUID userId) {
+        try {
+            // Get the currently authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User authenticatedUser = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view KYC.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the profile of the user by userId
+            KYC kyc = kycService.getKYCByUserId(userId);
+
+            // Check if the profile exists
+            if (kyc == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found.", null), HttpStatus.NOT_FOUND);
             }
 
             return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);

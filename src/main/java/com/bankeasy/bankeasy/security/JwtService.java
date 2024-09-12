@@ -39,6 +39,10 @@ public class JwtService {
     public String extractStatus(String token) {
         return extractClaim(token, claims -> claims.get("status", String.class));
     }
+    
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -74,6 +78,7 @@ public class JwtService {
         claims.put("firstName", user.getFirstName().toString());
         claims.put("email", user.getEmail());
         claims.put("status", user.getStatus());
+        claims.put("role", user.getRole());
         return createToken(claims, user.getId().toString());
     }
 
