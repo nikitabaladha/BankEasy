@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -72,4 +74,11 @@ public class AccountServiceImpl implements AccountService {
     public Optional<Account> findByAccountNumber(String accountNumber) {
         return accountDao.findByAccountNumber(accountNumber);
     }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        return accountDao.findAll();
+    }
+
+	
 }

@@ -155,9 +155,8 @@ public class User {
 
     public enum UserStatus {
         Pending,
-        Submitted,
-        Rejected,
         Approved,
+        Rejected,
     }
 
     @Id
@@ -184,7 +183,7 @@ public class User {
     private String salt;
 
     @Column(nullable = false)
-    private String role = "User"; // Default value for role
+    private String role = "User"; 
 
     @Column(updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -206,7 +205,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.role = "User"; // Default role assignment
+        this.role = "User";
     }
 
     // Getters and Setters

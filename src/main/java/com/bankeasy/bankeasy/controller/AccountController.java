@@ -156,6 +156,7 @@ package com.bankeasy.bankeasy.controller;
 import com.bankeasy.bankeasy.entities.Account;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.entities.KYC;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.KYCService;
@@ -173,6 +174,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -226,7 +228,69 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<Account>>> getAllAccounts() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User user = userService.findById(UUID.fromString(userIdStr));
 
+            if (user == null || !user.getRole().equals("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view all Accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get all accounts
+            List<Account> accounts = accountService.getAllAccounts();
+
+            // Filter out the admin's own account
+            accounts.removeIf(account -> account.getUserId().equals(user.getId()));
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Accounts retrieved successfully.", accounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve Accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    
+    @PutMapping("/delete/{userId}")
+    public ResponseEntity<ApiResponse<Account>> deleteAccount(@PathVariable UUID userId) {
+        try {
+            // Get the authenticated user (to check if it's an admin)
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String authenticatedUserIdStr = (String) authentication.getPrincipal();
+            User authenticatedUser = userService.findById(UUID.fromString(authenticatedUserIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can reject accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Find the user whose account needs to be rejected
+            User user = userService.findById(userId);
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            // Update the user's status to "Rejected"
+            userService.updateUserStatus(userId, User.UserStatus.Rejected);
+
+            // Optionally: Return the updated account information if necessary
+            Account account = accountService.findByUserId(userId);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Rejected.", account), HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to reject account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+   
+    
+
+//    User APIS
+    
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountUpdateValidator request, BindingResult result) {
         try {
@@ -278,7 +342,6 @@ public class AccountController {
         }
     }
     
-//    New
     
     @GetMapping("/find/{accountNumber}")
     public ResponseEntity<ApiResponse<Account>> findAccountByAccountNumber(@PathVariable String accountNumber) {
@@ -296,30 +359,6 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteAccount() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userIdStr = (String) authentication.getPrincipal();
-            UUID userId = UUID.fromString(userIdStr);
 
-            User user = userService.findById(userId);
-            if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
-            }
-
-            Account account = accountService.getAccountByUserId(userId);
-            if (account == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
-            }
-
-            accountService.deleteAccount(account);
-
-            return new ResponseEntity<>(new ApiResponse<>(false, "Account deleted successfully.", "Deleted"), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to delete account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
 

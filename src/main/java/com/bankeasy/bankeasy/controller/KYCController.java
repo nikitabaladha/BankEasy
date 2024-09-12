@@ -228,7 +228,7 @@ public class KYCController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+  
 }
     
  
