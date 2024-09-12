@@ -21,4 +21,12 @@ public class UserServiceImpl implements UserService {
     public User findById(UUID id) {
         return userDao.findById(id).orElse(null); 
     }
+    
+    @Override
+    public void updateUserStatus(UUID userId, User.UserStatus status) {
+        User user = userDao.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        user.setStatus(status);
+        userDao.save(user);
+    }
 }

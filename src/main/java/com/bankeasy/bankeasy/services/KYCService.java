@@ -19,5 +19,8 @@ public interface KYCService {
 	KYC findByUserId(UUID id);	
 	
 	KYC getApprovedKYCByUserId(UUID userId); 
+	
+	 void updateKYCStatus(UUID userId, KYC.VerificationStatus status);
+	
 }
 
