@@ -8,7 +8,9 @@ import com.bankeasy.bankeasy.services.AccountService;
 import com.bankeasy.bankeasy.services.TransferService;
 import com.bankeasy.bankeasy.services.UserService;
 import com.bankeasy.bankeasy.validators.TransferValidator;
+
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController

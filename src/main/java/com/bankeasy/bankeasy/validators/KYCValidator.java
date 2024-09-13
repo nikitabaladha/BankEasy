@@ -3,7 +3,6 @@ package com.bankeasy.bankeasy.validators;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-
 public class KYCValidator {
 
     @NotBlank(message = "Document type is required.")

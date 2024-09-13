@@ -2,7 +2,6 @@ package com.bankeasy.bankeasy.validators;
 
 import jakarta.validation.constraints.Size;
 
-
 public class KYCUpdateValidator {
 
     @Size(max = 50, message = "Document type must not exceed 50 characters.")

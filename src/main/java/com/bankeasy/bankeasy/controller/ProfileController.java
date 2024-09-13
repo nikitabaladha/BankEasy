@@ -32,7 +32,7 @@ public class ProfileController {
     @Autowired
     private UserService userService;
     
-//  Admin API
+//++++++++++ADMIN API++++++++++
      
     @GetMapping("/all-pending")
     public ResponseEntity<ApiResponse<List<Profile>>> getAllProfilesWithPendingUsers() {
@@ -92,7 +92,7 @@ public class ProfileController {
 
     
     
-//    User Apis
+//++++++++++USER APIS++++++++++
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Profile>> createProfile(@Valid @RequestBody ProfileValidator request, BindingResult result) {

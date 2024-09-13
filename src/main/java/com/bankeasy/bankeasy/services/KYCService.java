@@ -20,7 +20,7 @@ public interface KYCService {
 	
 	KYC getApprovedKYCByUserId(UUID userId); 
 	
-	 void updateKYCStatus(UUID userId, KYC.VerificationStatus status);
+	void updateKYCStatus(UUID userId, KYC.VerificationStatus status);
 	
 }
 

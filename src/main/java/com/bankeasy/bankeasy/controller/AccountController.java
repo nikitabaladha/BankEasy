@@ -43,7 +43,7 @@ public class AccountController {
     @Autowired
     private KYCService kycService;
 
- // Endpoint for admin to create an account for a specific user
+ // ++++++++++ADMIN APIS++++++++++
     
     @PostMapping("/create/{userId}")
     public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
@@ -116,7 +116,7 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-  
+   
     @PutMapping("/delete/{userId}")
     public ResponseEntity<ApiResponse<Account>> deleteAccount(@PathVariable UUID userId) {
         try {
@@ -138,6 +138,9 @@ public class AccountController {
 
             // Update the user's status to "Rejected"
             userService.updateUserStatus(userId, User.UserStatus.Rejected);
+            
+            // Update the KYC status to "Rejected"
+            kycService.updateKYCStatus(userId, KYC.VerificationStatus.Rejected);
 
             // Optionally: Return the updated account information if necessary
             Account account = accountService.findByUserId(userId);
@@ -149,7 +152,39 @@ public class AccountController {
         }
     }
     
-//    User APIS
+    @GetMapping("/rejected-all")
+    public ResponseEntity<ApiResponse<List<Account>>> getAllRejectedAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Fetch users with status 'Rejected' and their accounts
+            List<User> rejectedUsers = userService.findByStatus(User.UserStatus.Rejected);
+            List<Account> rejectedAccounts = new ArrayList<>();
+            
+            for (User rejectedUser : rejectedUsers) {
+                Account account = accountService.findByUserId(rejectedUser.getId());
+                if (account != null) {
+                    rejectedAccounts.add(account);
+                }
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Rejected accounts retrieved successfully.", rejectedAccounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve rejected accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+//++++++++++USER APIS++++++++++
     
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountUpdateValidator request, BindingResult result) {

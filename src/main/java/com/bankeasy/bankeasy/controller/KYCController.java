@@ -1,6 +1,5 @@
 package com.bankeasy.bankeasy.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bankeasy.bankeasy.entities.KYC;
-import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.services.KYCService;
@@ -33,6 +31,8 @@ public class KYCController {
     private final KYCService kycService;
     private final UserService userService;
     private final FileStorageService fileStorageService;
+    
+//+++++++++USER APIS++++++++++
 
     @Autowired
     public KYCController(KYCService kycService, UserService userService, FileStorageService fileStorageService) {
@@ -199,7 +199,7 @@ public class KYCController {
         }
     }
     
-//    Admin 
+//+++++++++ADMIN APIS++++++++++
     
     @GetMapping("/get/{userId}")
     public ResponseEntity<ApiResponse<KYC>> getKYC(@PathVariable UUID userId) {
@@ -229,6 +229,43 @@ public class KYCController {
         }
     }
   
+    @PutMapping("/reject/{userId}")
+    public ResponseEntity<ApiResponse<KYC>> rejectKYC(@PathVariable UUID userId) {
+        try {
+            // Get the authenticated user (to check if it's an admin)
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String authenticatedUserIdStr = (String) authentication.getPrincipal();
+            User authenticatedUser = userService.findById(UUID.fromString(authenticatedUserIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can reject KYC.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Find the user whose kyc needs to be rejected
+            User user = userService.findById(userId);
+            
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            KYC kyc = kycService.findByUserId(userId);
+            
+            if (kyc == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "KYC record not found for user.", null), HttpStatus.NOT_FOUND);
+            }
+            
+         // Update the user's KYC status to "Rejected"
+            kyc.setVerified(KYC.VerificationStatus.Rejected);
+            kycService.updateKYC(kyc);
+            
+            return new ResponseEntity<>(new ApiResponse<>(false, "KYC Rejected Successfully.", kyc), HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to reject kyc: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
     
  

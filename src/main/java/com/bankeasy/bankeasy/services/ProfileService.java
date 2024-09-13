@@ -16,8 +16,6 @@ public interface ProfileService {
     
 	Profile updateProfile(Profile existingProfile);
 	
-	//	Admin service
-	
 	List<Profile> getAllProfiles();
 
 	Profile getProfileByserId(UUID userId);

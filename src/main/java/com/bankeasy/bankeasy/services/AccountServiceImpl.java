@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
-
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -74,7 +72,6 @@ public class AccountServiceImpl implements AccountService {
         return accountDao.findByUserId(userId);
     }
     
-//    New
     @Override
     public Optional<Account> findByAccountNumber(String accountNumber) {
         return accountDao.findByAccountNumber(accountNumber);
@@ -85,7 +82,4 @@ public class AccountServiceImpl implements AccountService {
         return accountDao.findAll();
     }
     
-  
-
-	
 }

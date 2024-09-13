@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-
 public class SignupValidator {
 
     @NotBlank(message = "First name is required.")
@@ -60,7 +59,5 @@ public class SignupValidator {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    
+    }  
 }

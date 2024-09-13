@@ -1,19 +1,16 @@
-
 package com.bankeasy.bankeasy.services;
 
 import org.springframework.security.crypto.codec.Hex;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.bankeasy.bankeasy.dao.UserDao;
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
 import com.bankeasy.bankeasy.validators.SignupValidator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
-
 
 @Service
 public class SignupServiceImpl implements SignupService {

@@ -49,7 +49,5 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile getProfileByserId(UUID userId) {
         return getProfileByUserId(userId);  
     }
-
-  
 }
 

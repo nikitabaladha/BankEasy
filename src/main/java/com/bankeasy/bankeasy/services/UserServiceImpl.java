@@ -1,6 +1,8 @@
 package com.bankeasy.bankeasy.services;
 
+import java.util.List;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bankeasy.bankeasy.dao.UserDao;
@@ -29,4 +31,10 @@ public class UserServiceImpl implements UserService {
         user.setStatus(status);
         userDao.save(user);
     }
+    
+    @Override
+    public List<User> findByStatus(User.UserStatus status) {
+        return userDao.findByStatus(status);
+    }
+
 }
