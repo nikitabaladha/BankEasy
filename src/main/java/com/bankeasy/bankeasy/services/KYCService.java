@@ -22,5 +22,7 @@ public interface KYCService {
 	
 	void updateKYCStatus(UUID userId, KYC.VerificationStatus status);
 	
+	public List<KYC> getPendingKYC();
+
 }
 

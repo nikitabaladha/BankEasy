@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import jakarta.validation.Valid;
@@ -45,6 +46,42 @@ public class AccountController {
 
  // ++++++++++ADMIN APIS++++++++++
     
+//    @PostMapping("/create/{userId}")
+//    public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
+//        try {
+//            // Get the currently authenticated user (the admin)
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            String authenticatedUserIdStr = (String) authentication.getPrincipal();
+//            User authenticatedUser = userService.findById(UUID.fromString(authenticatedUserIdStr));
+//
+//            // Check if the authenticated user is an Admin
+//            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+//                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can create accounts.", null), HttpStatus.FORBIDDEN);
+//            }
+//
+//            // Find the user for whom the account is being created
+//            User user = userService.findById(userId);
+//            if (user == null) {
+//                return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
+//            }
+//            
+//            // Update the user's status to "Approved"
+//            userService.updateUserStatus(userId, User.UserStatus.Approved);
+//            
+//            // Update the KYC status to "Approved"
+//            kycService.updateKYCStatus(userId, KYC.VerificationStatus.Approved);
+//
+//            // Create the account for the user
+//            Account createdAccount = accountService.createAccount(user);
+//
+//            return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", createdAccount), HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+    
     @PostMapping("/create/{userId}")
     public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
         try {
@@ -63,12 +100,20 @@ public class AccountController {
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
-            
+
             // Update the user's status to "Approved"
             userService.updateUserStatus(userId, User.UserStatus.Approved);
-            
-            // Update the KYC status to "Approved"
-            kycService.updateKYCStatus(userId, KYC.VerificationStatus.Approved);
+
+            // Retrieve all KYC records for the user
+            List<KYC> kycs = kycService.getAllKYCsByUserId(userId);
+
+            // Update the status of the first "Pending" KYC record
+            for (KYC kyc : kycs) {
+                if (kyc.getVerified() == KYC.VerificationStatus.Pending) {
+                    kycService.updateKYCStatus(kyc.getId(), KYC.VerificationStatus.Approved);
+                    break; // Only update one pending KYC record
+                }
+            }
 
             // Create the account for the user
             Account createdAccount = accountService.createAccount(user);
@@ -80,6 +125,8 @@ public class AccountController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
     
     
     @GetMapping("/all")

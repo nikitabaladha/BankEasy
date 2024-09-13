@@ -1,5 +1,7 @@
 package com.bankeasy.bankeasy.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,7 +191,7 @@ public class KYCController {
             KYC kyc = kycService.getKYCByUserId(userId);
 
             if (kyc == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Approved KYC not found for the user.", null), HttpStatus.OK);
+                return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found for the user.", null), HttpStatus.OK);
             }
 
             return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
@@ -200,6 +202,34 @@ public class KYCController {
     }
     
 //+++++++++ADMIN APIS++++++++++
+    
+//    @GetMapping("/get/{userId}")
+//    public ResponseEntity<ApiResponse<KYC>> getKYC(@PathVariable UUID userId) {
+//        try {
+//            // Get the currently authenticated user
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            String userIdStr = (String) authentication.getPrincipal();
+//            User authenticatedUser = userService.findById(UUID.fromString(userIdStr));
+//
+//            // Check if the authenticated user is an Admin
+//            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+//                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view KYC.", null), HttpStatus.FORBIDDEN);
+//            }
+//
+//            // Get the profile of the user by userId
+//            KYC kyc = kycService.getKYCByUserId(userId);
+//
+//            // Check if the profile exists
+//            if (kyc == null) {
+//                return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found.", null), HttpStatus.NOT_FOUND);
+//            }
+//
+//            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
     
     @GetMapping("/get/{userId}")
     public ResponseEntity<ApiResponse<KYC>> getKYC(@PathVariable UUID userId) {
@@ -214,21 +244,24 @@ public class KYCController {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view KYC.", null), HttpStatus.FORBIDDEN);
             }
 
-            // Get the profile of the user by userId
-            KYC kyc = kycService.getKYCByUserId(userId);
+            // Get the pending KYC record for the specified user
+            List<KYC> pendingKYCs = kycService.getPendingKYC();
+            KYC pendingKYC = pendingKYCs.stream()
+                    .filter(kyc -> kyc.getUserId().equals(userId) && kyc.getVerified() == KYC.VerificationStatus.Pending)
+                    .findFirst()
+                    .orElse(null);
 
-            // Check if the profile exists
-            if (kyc == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "KYC not found.", null), HttpStatus.NOT_FOUND);
+            if (pendingKYC == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Pending KYC not found.", null), HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "KYC retrieved successfully.", kyc), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Pending KYC retrieved successfully.", pendingKYC), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve pending KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-  
+ 
     @PutMapping("/reject/{userId}")
     public ResponseEntity<ApiResponse<KYC>> rejectKYC(@PathVariable UUID userId) {
         try {

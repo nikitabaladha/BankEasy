@@ -18,6 +18,7 @@ public class User {
         Pending,
         Approved,
         Rejected,
+        Closed
     }
 
     @Id

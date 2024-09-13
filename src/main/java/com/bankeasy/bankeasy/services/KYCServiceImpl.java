@@ -57,5 +57,17 @@ public class KYCServiceImpl implements KYCService {
         kyc.setVerified(status);
         kycDao.save(kyc);
     }
+	
+	@Override
+	public List<KYC> getPendingKYC() {
+	    return kycDao.findByVerified(KYC.VerificationStatus.Pending);
+	}
+	
+//	@Override
+//    public List<KYC> getPendingKYCs() {
+//        return kycDao.findByVerified(KYC.VerificationStatus.Pending);
+//    }
+
+	
 }
 
