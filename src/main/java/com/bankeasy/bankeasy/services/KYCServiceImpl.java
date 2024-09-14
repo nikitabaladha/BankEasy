@@ -63,6 +63,10 @@ public class KYCServiceImpl implements KYCService {
 	    return kycDao.findByVerified(KYC.VerificationStatus.Pending);
 	}
 	
+	public KYC getPendingKYCByUserId(UUID userId) {
+		return kycDao.findByUserId(userId);
+	}
+	
 //	@Override
 //    public List<KYC> getPendingKYCs() {
 //        return kycDao.findByVerified(KYC.VerificationStatus.Pending);

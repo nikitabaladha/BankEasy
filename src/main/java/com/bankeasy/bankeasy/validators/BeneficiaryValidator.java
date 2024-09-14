@@ -15,8 +15,13 @@ public class BeneficiaryValidator {
     @Size(min = 2, max = 30, message = "Bank Name must be between 2 and 30 characters.")
     private String bankName;
 
+//    @NotBlank(message = "IFSC code is required.")
+//    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "IFSC Code must be in the format XXXX0YYYYYY.")
+//    private String ifscCode;
+    
     @NotBlank(message = "IFSC code is required.")
-    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "IFSC Code must be in the format XXXX0YYYYYY.")
+    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "IFSC Code must be in the format XXXX0YYYYYY (India).")
+    @Pattern(regexp = "^[A-Z0-9]{6,20}$", message = "IFSC Code must be between 6 and 20 characters (Global).")
     private String ifscCode;
     
     @NotBlank(message = "Account Number is required.")
