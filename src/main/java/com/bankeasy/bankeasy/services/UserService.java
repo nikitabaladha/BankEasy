@@ -13,4 +13,10 @@ public interface UserService {
     void updateUserStatus(UUID userId, User.UserStatus status);
     
     List<User> findByStatus(User.UserStatus status);
+    
+    long countActiveUsers();
+    
+    long countPendingUsers();
+    
+    long countRejectedUsers();
 }

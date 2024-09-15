@@ -82,4 +82,8 @@ public class AccountServiceImpl implements AccountService {
         return accountDao.findAll();
     }
     
+    @Override
+    public long countAllAccounts() {
+        return accountDao.count();
+    }
 }

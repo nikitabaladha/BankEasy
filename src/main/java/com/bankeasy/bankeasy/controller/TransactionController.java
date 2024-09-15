@@ -26,6 +26,30 @@ public class TransactionController {
 
     @Autowired
     private UserService userService;
+    
+//++++++++++ADMIN APIS+++++++++
+    @GetMapping("/get-all/{userId}")
+    public ResponseEntity<ApiResponse<List<Transaction>>> getAllTransactionsForAdmin(@PathVariable UUID userId) {
+        try {
+        	 // Get the currently authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+             User authenticatedUser = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+             if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view KYC.", null), HttpStatus.FORBIDDEN);
+             }
+
+            List<Transaction> transactions = transactionService.getAllTransactionsByUserId(userId);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Transactions retrieved successfully.", transactions), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve transactions: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+//++++++++++USER APIS++++++++++
 
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse<List<Transaction>>> getAllTransactions() {

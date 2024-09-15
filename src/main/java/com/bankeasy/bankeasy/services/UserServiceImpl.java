@@ -36,5 +36,22 @@ public class UserServiceImpl implements UserService {
     public List<User> findByStatus(User.UserStatus status) {
         return userDao.findByStatus(status);
     }
+    
+    @Override
+    public long countActiveUsers() {
+        return userDao.countByStatus(User.UserStatus.Approved);
+    }
+    
+    @Override
+    public long countPendingUsers() {
+        return userDao.countByStatus(User.UserStatus.Pending);
+    }
+
+    
+    @Override
+    public long countRejectedUsers() {
+        return userDao.countByStatus(User.UserStatus.Rejected);
+    }
+
 
 }

@@ -22,5 +22,7 @@ public interface AccountService {
     Optional<Account> findByAccountNumber(String accountNumber);
     
 	List<Account> getAllAccounts();
+	
+	long countAllAccounts();
    	
 }

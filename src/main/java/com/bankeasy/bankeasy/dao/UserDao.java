@@ -15,5 +15,7 @@ public interface UserDao extends JpaRepository<User, UUID> {
     Optional<User> findById(UUID id);
     
     List<User> findByStatus(User.UserStatus status);
+    
+    long countByStatus(User.UserStatus status);
    
 }

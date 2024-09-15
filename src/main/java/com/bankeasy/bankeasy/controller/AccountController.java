@@ -45,6 +45,102 @@ public class AccountController {
 
  // ++++++++++ADMIN APIS++++++++++
     
+    @GetMapping("/total")
+    public ResponseEntity<ApiResponse<Long>> getTotalAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the total number of accounts
+            long totalAccounts = accountService.countAllAccounts();
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Total accounts retrieved successfully.", totalAccounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+
+    @GetMapping("/active-total")
+    public ResponseEntity<ApiResponse<Long>> getTotalActiveAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total active accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the total number of active accounts
+            long totalActiveAccounts = userService.countActiveUsers();
+            
+            totalActiveAccounts--;
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Total active accounts retrieved successfully.", totalActiveAccounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total active accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/pending-total")
+    public ResponseEntity<ApiResponse<Long>> getTotalPendingAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total pending accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the total number of active accounts
+            long totalPendingAccounts = userService.countPendingUsers();
+            
+                      return new ResponseEntity<>(new ApiResponse<>(false, "Total pending accounts retrieved successfully.", totalPendingAccounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total pending accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/rejected-total")
+    public ResponseEntity<ApiResponse<Long>> getTotalRejectedAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total Rejected accounts.", null), HttpStatus.FORBIDDEN);
+            }
+
+            // Get the total number of active accounts
+            long totalRejectedAccounts = userService.countRejectedUsers();
+            
+                      return new ResponseEntity<>(new ApiResponse<>(false, "Total Rejected accounts retrieved successfully.", totalRejectedAccounts), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total rejected accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
     @PostMapping("/create/{userId}")
     public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
         try {
@@ -60,6 +156,7 @@ public class AccountController {
 
             // Find the user for whom the account is being created
             User user = userService.findById(userId);
+            
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
