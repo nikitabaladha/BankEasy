@@ -17,5 +17,7 @@ public interface KYCDao extends JpaRepository<KYC, UUID> {
     
     List<KYC> findByVerified(KYC.VerificationStatus status);
     
+    KYC findAllByUserIdAndVerified(UUID userId, KYC.VerificationStatus verifiedStatus);
+    
 }
 

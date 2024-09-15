@@ -12,9 +12,9 @@ public interface KYCService {
     
     KYC updateKYC(KYC kyc);
     
-    List<KYC> getAllKYCsByUserId(UUID userId);
-
 	KYC getKYCByUserId(UUID userId);
+    
+    List<KYC> getAllKYCsByUserId(UUID userId);
 
 	KYC findByUserId(UUID id);	
 	
@@ -24,9 +24,7 @@ public interface KYCService {
 	
 	public List<KYC> getPendingKYC();
 	
-
 	public KYC getPendingKYCByUserId(UUID userId);
 	
-
 }
 
