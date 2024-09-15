@@ -41,7 +41,41 @@ public class BeneficiaryController {
     
     @Autowired
     private AccountService accountService;
+    
+//+++++++++ADMIN APIS++++++++++
+    
+    @GetMapping("/get-approved/{userId}")
+    public ResponseEntity<ApiResponse<List<Beneficiary>>> getAllApprovedBeneficiaries(@PathVariable UUID userId) {
+        try {
+        	 // Get the currently authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+             User authenticatedUser = userService.findById(UUID.fromString(userIdStr));
 
+            // Check if the authenticated user is an Admin
+             if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
+                 return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view KYC.", null), HttpStatus.FORBIDDEN);
+             }
+
+            
+            // Fetch all active beneficiaries associated with the user
+            List<Beneficiary> beneficiaries = beneficiaryService.getActiveBeneficiariesByUserId(userId);
+            
+            if (beneficiaries == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "Beneficiary not found.", null), HttpStatus.NOT_FOUND);
+            }
+
+            // Return the list of beneficiaries if found
+            return new ResponseEntity<>(new ApiResponse<>(false, "Active beneficiaries retrieved successfully.", beneficiaries), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve beneficiaries: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+        
+    
+//++++++++++ADMIN APIS++++++++++
+    
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Beneficiary>> createBeneficiary(@Valid @RequestBody BeneficiaryValidator request, BindingResult result) {
         try {

@@ -230,7 +230,6 @@ public class KYCController {
     }
  
     
-    
     @GetMapping("/get/{userId}")
     public ResponseEntity<ApiResponse<KYC>> getKYC(@PathVariable UUID userId) {
         try {
@@ -261,13 +260,7 @@ public class KYCController {
             return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve pending KYC: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
-    
-    
-    
-    
-    
+     
     @PutMapping("/reject/{userId}")
     public ResponseEntity<ApiResponse<KYC>> rejectKYC(@PathVariable UUID userId) {
         try {
