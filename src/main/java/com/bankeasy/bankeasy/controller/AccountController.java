@@ -230,6 +230,7 @@ public class AccountController {
 
             // Find the user whose account needs to be rejected
             User user = userService.findById(userId);
+            
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
@@ -242,6 +243,7 @@ public class AccountController {
 
             // Optionally: Return the updated account information if necessary
             Account account = accountService.findByUserId(userId);
+            
             return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Rejected.", account), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -265,6 +267,7 @@ public class AccountController {
 
             // Fetch users with status 'Rejected' and their accounts
             List<User> rejectedUsers = userService.findByStatus(User.UserStatus.Rejected);
+            
             List<Account> rejectedAccounts = new ArrayList<>();
             
             for (User rejectedUser : rejectedUsers) {
