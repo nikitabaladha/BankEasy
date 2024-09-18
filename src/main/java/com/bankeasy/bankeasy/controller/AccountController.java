@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.controller;
 
 import com.bankeasy.bankeasy.entities.Account;
+
 import com.bankeasy.bankeasy.entities.User;
 import com.bankeasy.bankeasy.entities.KYC;
 import com.bankeasy.bankeasy.reqres.ApiResponse;
@@ -161,6 +162,35 @@ public class AccountController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/closed-total")
+    public ResponseEntity<ApiResponse<Long>> getTotalClosedAccounts() {
+        try {
+            // Get the currently authenticated admin user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userIdStr = (String) authentication.getPrincipal();
+            User admin = userService.findById(UUID.fromString(userIdStr));
+
+            // Check if the authenticated user is an Admin
+            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view total Rejected accounts.", null),
+                        HttpStatus.FORBIDDEN);
+            }
+
+            // Get the total number of active accounts
+            long totalClosedAccounts = userService.countClosedUsers();
+
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Total Closed accounts retrieved successfully.", totalClosedAccounts),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve total Closed accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping("/create/{userId}")
     public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
@@ -283,44 +313,117 @@ public class AccountController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+  @GetMapping("/rejected-all")
+  public ResponseEntity<ApiResponse<List<User>>> getAllRejectedAccounts() {
+      try {
+          // Get the currently authenticated admin user
+          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+          String userIdStr = (String) authentication.getPrincipal();
+          User admin = userService.findById(UUID.fromString(userIdStr));
+  
+          // Check if the authenticated user is an Admin
+          if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+              return new ResponseEntity<>(
+                      new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null),
+                      HttpStatus.FORBIDDEN);
+          }
+  
+          // Fetch users with status 'Rejected' and their accounts
+          List<User> rejectedUsers = userService.findByStatus(User.UserStatus.Rejected);
+  
+   
+          return new ResponseEntity<>(
+                  new ApiResponse<>(false, "Rejected accounts retrieved successfully.", rejectedUsers),
+                  HttpStatus.OK);
+      } catch (Exception e) {
+          e.printStackTrace();
+          return new ResponseEntity<>(
+                  new ApiResponse<>(true, "Failed to retrieve rejected accounts: " + e.getMessage(), null),
+                  HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
 
-    @GetMapping("/rejected-all")
-    public ResponseEntity<ApiResponse<List<Account>>> getAllRejectedAccounts() {
+
+    @PutMapping("/close/{userId}")
+    public ResponseEntity<ApiResponse<Account>> closeAccount(@PathVariable UUID userId) {
         try {
-            // Get the currently authenticated admin user
+            // Get the authenticated user (to check if it's an admin)
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String userIdStr = (String) authentication.getPrincipal();
-            User admin = userService.findById(UUID.fromString(userIdStr));
+            String authenticatedUserIdStr = (String) authentication.getPrincipal();
+            User authenticatedUser = userService.findById(UUID.fromString(authenticatedUserIdStr));
 
             // Check if the authenticated user is an Admin
-            if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+            if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
                 return new ResponseEntity<>(
-                        new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null),
+                        new ApiResponse<>(true, "Unauthorized: Only admins can close accounts.", null),
                         HttpStatus.FORBIDDEN);
             }
 
-            // Fetch users with status 'Rejected' and their accounts
-            List<User> rejectedUsers = userService.findByStatus(User.UserStatus.Rejected);
+            // Find the user whose account needs to be rejected
+            User user = userService.findById(userId);
 
-            List<Account> rejectedAccounts = new ArrayList<>();
-
-            for (User rejectedUser : rejectedUsers) {
-                Account account = accountService.findByUserId(rejectedUser.getId());
-                if (account != null) {
-                    rejectedAccounts.add(account);
-                }
+            if (user == null) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Rejected accounts retrieved successfully.", rejectedAccounts),
+            // Update the user's status to "Rejected"
+            userService.updateUserStatus(userId, User.UserStatus.Closed);
+
+            // Update the KYC status to "Rejected"
+            kycService.updateKYCStatus(userId, KYC.VerificationStatus.Rejected);
+
+            // Optionally: Return the updated account information if necessary
+            Account account = accountService.findByUserId(userId);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Closed.", account),
                     HttpStatus.OK);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(
-                    new ApiResponse<>(true, "Failed to retrieve rejected accounts: " + e.getMessage(), null),
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to close account: " + e.getMessage(), null),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+   
+  @GetMapping("/closed-all")
+  public ResponseEntity<ApiResponse<List<Account>>> getAllClosedAccounts() {
+      try {
+          // Get the currently authenticated admin user
+          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+          String userIdStr = (String) authentication.getPrincipal();
+          User admin = userService.findById(UUID.fromString(userIdStr));
+
+          // Check if the authenticated user is an Admin
+          if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
+              return new ResponseEntity<>(
+                      new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null),
+                      HttpStatus.FORBIDDEN);
+          }
+
+          // Fetch users with status 'Rejected' and their accounts
+          List<User> closedUsers = userService.findByStatus(User.UserStatus.Closed);
+
+          List<Account> closedAccounts = new ArrayList<>();
+
+          for (User closedUser : closedUsers) {
+              Account account = accountService.findByUserId(closedUser.getId());
+              if (account != null) {
+                  closedAccounts.add(account);
+              }
+          }
+
+          return new ResponseEntity<>(
+                  new ApiResponse<>(false, "Closed accounts retrieved successfully.", closedAccounts),
+                  HttpStatus.OK);
+      } catch (Exception e) {
+          e.printStackTrace();
+          return new ResponseEntity<>(
+                  new ApiResponse<>(true, "Failed to retrieve closed accounts: " + e.getMessage(), null),
+                  HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
 
     // ++++++++++USER APIS++++++++++
 
@@ -401,3 +504,23 @@ public class AccountController {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
