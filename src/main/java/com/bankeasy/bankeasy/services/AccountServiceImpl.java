@@ -20,29 +20,29 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountDao accountDao;
-    
+
     @Autowired
     private ProfileDao profileDao;
-    
+
     @Autowired
     private UserDao userDao;
-	
+
     @Override
     public Account createAccount(User user) {
-        
+
         Profile profile = profileDao.findByUserId(user.getId());
 
         if (profile == null) {
             throw new RuntimeException("Profile not found for userId: " + user.getId());
         }
 
-       String accountType = profile.getAccountType();
+        String accountType = profile.getAccountType();
 
-       String accountNumber = AccountUtils.generateRandomAccountNumber();
+        String accountNumber = AccountUtils.generateRandomAccountNumber();
 
-       Account account = new Account(user, accountNumber, BigDecimal.ZERO, accountType);
+        Account account = new Account(user, accountNumber, BigDecimal.ZERO, accountType);
 
-       return accountDao.save(account);
+        return accountDao.save(account);
     }
 
     @Override
@@ -54,9 +54,9 @@ public class AccountServiceImpl implements AccountService {
             }
             return accountDao.save(account);
         }
-        return null; 
+        return null;
     }
-    
+
     @Override
     public Account getAccountByUserId(UUID userId) {
         return accountDao.findByUserId(userId);
@@ -71,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
     public Account findByUserId(UUID userId) {
         return accountDao.findByUserId(userId);
     }
-    
+
     @Override
     public Optional<Account> findByAccountNumber(String accountNumber) {
         return accountDao.findByAccountNumber(accountNumber);
@@ -81,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAllAccounts() {
         return accountDao.findAll();
     }
-    
+
     @Override
     public long countAllAccounts() {
         return accountDao.count();

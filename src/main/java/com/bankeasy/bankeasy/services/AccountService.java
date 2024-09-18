@@ -10,19 +10,22 @@ import java.util.UUID;
 
 public interface AccountService {
     Account createAccount(User user);
-    
+
     Account updateAccountByUserId(UUID userId, BigDecimal newBalance);
-    
+
     Account getAccountByUserId(UUID userId);
-    
+
     void deleteAccount(Account account);
-    
+
     Account findByUserId(UUID userId);
-    
+
     Optional<Account> findByAccountNumber(String accountNumber);
-    
-	List<Account> getAllAccounts();
-	
-	long countAllAccounts();
-   	
+
+    List<Account> getAllAccounts();
+
+    long countAllAccounts();
+
+    Account createAccount(User user, String accountNumber);
+
+    void deleteAccount(UUID userId);
 }

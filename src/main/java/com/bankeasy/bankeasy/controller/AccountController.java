@@ -39,12 +39,12 @@ public class AccountController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private KYCService kycService;
 
- // ++++++++++ADMIN APIS++++++++++
-    
+    // ++++++++++ADMIN APIS++++++++++
+
     @GetMapping("/total")
     public ResponseEntity<ApiResponse<Long>> getTotalAccounts() {
         try {
@@ -55,19 +55,23 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view total accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Get the total number of accounts
             long totalAccounts = accountService.countAllAccounts();
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Total accounts retrieved successfully.", totalAccounts), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Total accounts retrieved successfully.", totalAccounts), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve total accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
 
     @GetMapping("/active-total")
     public ResponseEntity<ApiResponse<Long>> getTotalActiveAccounts() {
@@ -79,21 +83,27 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total active accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view total active accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Get the total number of active accounts
             long totalActiveAccounts = userService.countActiveUsers();
-            
+
             totalActiveAccounts--;
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Total active accounts retrieved successfully.", totalActiveAccounts), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Total active accounts retrieved successfully.", totalActiveAccounts),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total active accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve total active accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/pending-total")
     public ResponseEntity<ApiResponse<Long>> getTotalPendingAccounts() {
         try {
@@ -104,19 +114,25 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total pending accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view total pending accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Get the total number of active accounts
             long totalPendingAccounts = userService.countPendingUsers();
-            
-                      return new ResponseEntity<>(new ApiResponse<>(false, "Total pending accounts retrieved successfully.", totalPendingAccounts), HttpStatus.OK);
+
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Total pending accounts retrieved successfully.", totalPendingAccounts),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total pending accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve total pending accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/rejected-total")
     public ResponseEntity<ApiResponse<Long>> getTotalRejectedAccounts() {
         try {
@@ -127,20 +143,25 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view total Rejected accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view total Rejected accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Get the total number of active accounts
             long totalRejectedAccounts = userService.countRejectedUsers();
-            
-                      return new ResponseEntity<>(new ApiResponse<>(false, "Total Rejected accounts retrieved successfully.", totalRejectedAccounts), HttpStatus.OK);
+
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Total Rejected accounts retrieved successfully.", totalRejectedAccounts),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve total rejected accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve total rejected accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    
     @PostMapping("/create/{userId}")
     public ResponseEntity<ApiResponse<Account>> createAccountForUser(@PathVariable UUID userId) {
         try {
@@ -151,33 +172,36 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can create accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can create accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Find the user for whom the account is being created
             User user = userService.findById(userId);
-            
+
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
-            
+
             // Update the user's status to "Approved"
             userService.updateUserStatus(userId, User.UserStatus.Approved);
-            
+
             // Update the KYC status to "Approved"
             kycService.updateKYCStatus(userId, KYC.VerificationStatus.Approved);
 
             // Create the account for the user
             Account createdAccount = accountService.createAccount(user);
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", createdAccount), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account created successfully.", createdAccount),
+                    HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to create account: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<Account>>> getAllAccounts() {
@@ -189,12 +213,14 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view all accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view all accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Get all accounts
             List<Account> allAccounts = accountService.getAllAccounts();
-            
+
             List<Account> filteredAccounts = new ArrayList<>();
 
             // Filter accounts based on user status
@@ -208,13 +234,15 @@ public class AccountController {
             // Remove admin's own account from the list
             filteredAccounts.removeIf(account -> account.getUserId().equals(admin.getId()));
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Accounts retrieved successfully.", filteredAccounts), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Accounts retrieved successfully.", filteredAccounts),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-   
+
     @PutMapping("/delete/{userId}")
     public ResponseEntity<ApiResponse<Account>> deleteAccount(@PathVariable UUID userId) {
         try {
@@ -225,33 +253,37 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (authenticatedUser == null || !authenticatedUser.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can reject accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can reject accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Find the user whose account needs to be rejected
             User user = userService.findById(userId);
-            
+
             if (user == null) {
                 return new ResponseEntity<>(new ApiResponse<>(true, "User not found.", null), HttpStatus.NOT_FOUND);
             }
 
             // Update the user's status to "Rejected"
             userService.updateUserStatus(userId, User.UserStatus.Rejected);
-            
+
             // Update the KYC status to "Rejected"
             kycService.updateKYCStatus(userId, KYC.VerificationStatus.Rejected);
 
             // Optionally: Return the updated account information if necessary
             Account account = accountService.findByUserId(userId);
-            
-            return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Rejected.", account), HttpStatus.OK);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account status updated to Rejected.", account),
+                    HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to reject account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to reject account: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/rejected-all")
     public ResponseEntity<ApiResponse<List<Account>>> getAllRejectedAccounts() {
         try {
@@ -262,14 +294,16 @@ public class AccountController {
 
             // Check if the authenticated user is an Admin
             if (admin == null || !admin.getRole().equalsIgnoreCase("Admin")) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(true, "Unauthorized: Only admins can view rejected accounts.", null),
+                        HttpStatus.FORBIDDEN);
             }
 
             // Fetch users with status 'Rejected' and their accounts
             List<User> rejectedUsers = userService.findByStatus(User.UserStatus.Rejected);
-            
+
             List<Account> rejectedAccounts = new ArrayList<>();
-            
+
             for (User rejectedUser : rejectedUsers) {
                 Account account = accountService.findByUserId(rejectedUser.getId());
                 if (account != null) {
@@ -277,18 +311,22 @@ public class AccountController {
                 }
             }
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Rejected accounts retrieved successfully.", rejectedAccounts), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Rejected accounts retrieved successfully.", rejectedAccounts),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve rejected accounts: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Failed to retrieve rejected accounts: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // ++++++++++USER APIS++++++++++
 
-//++++++++++USER APIS++++++++++
-    
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountUpdateValidator request, BindingResult result) {
+    public ResponseEntity<ApiResponse<Account>> updateAccount(@Valid @RequestBody AccountUpdateValidator request,
+            BindingResult result) {
         try {
             if (result.hasErrors()) {
                 String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
@@ -301,22 +339,25 @@ public class AccountController {
 
             User user = userService.findById(userId);
             if (user == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ApiResponse<>(true, "Unauthorized: User not found.", null),
+                        HttpStatus.UNAUTHORIZED);
             }
-            
-            BigDecimal newBalance = request.getBalance(); 
 
-          
+            BigDecimal newBalance = request.getBalance();
+
             Account updatedAccount = accountService.updateAccountByUserId(userId, newBalance);
 
             if (updatedAccount == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null),
+                        HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Account updated successfully.", updatedAccount), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account updated successfully.", updatedAccount),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to update account: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -328,31 +369,35 @@ public class AccountController {
 
             Account account = accountService.getAccountByUserId(UUID.fromString(userId));
             if (account == null) {
-                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse<>(true, "Account not found for the user.", null),
+                        HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", account), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", account),
+                    HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
     @GetMapping("/find/{accountNumber}")
     public ResponseEntity<ApiResponse<Account>> findAccountByAccountNumber(@PathVariable String accountNumber) {
         try {
             Optional<Account> accountOptional = accountService.findByAccountNumber(accountNumber);
 
             if (accountOptional.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse<>(false, "Account retrieved successfully.", accountOptional.get()), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        new ApiResponse<>(false, "Account retrieved successfully.", accountOptional.get()),
+                        HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ApiResponse<>(true, "Account not found.", null), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(true, "Failed to retrieve account: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
-
