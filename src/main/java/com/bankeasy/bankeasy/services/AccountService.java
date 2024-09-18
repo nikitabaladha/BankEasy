@@ -24,8 +24,4 @@ public interface AccountService {
     List<Account> getAllAccounts();
 
     long countAllAccounts();
-
-    Account createAccount(User user, String accountNumber);
-
-    void deleteAccount(UUID userId);
 }
