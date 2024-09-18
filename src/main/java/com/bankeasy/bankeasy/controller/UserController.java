@@ -1,6 +1,7 @@
 package com.bankeasy.bankeasy.controller;
 
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable UUID id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal(); // Get userId from authentication
+        String userId = (String) authentication.getPrincipal(); 
 
         User user = userService.findById(UUID.fromString(userId));
         if (user == null || !user.getId().equals(id)) {

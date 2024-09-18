@@ -1,22 +1,25 @@
 package com.bankeasy.bankeasy.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.util.UUID;
-import java.util.Date;
 
+import java.util.Date;
+import java.util.UUID;
+
+@JsonIgnoreProperties({"transfers", "transactions"})
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
+
+    public enum UserStatus {
+        Pending,
+        Approved,
+        Rejected,
+        Closed
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,11 +37,15 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status = "pending";
+    private UserStatus status = UserStatus.Pending;
 
     @Column(nullable = false)
     private String salt;
+
+    @Column(nullable = false)
+    private String role = "User"; 
 
     @Column(updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -60,7 +67,10 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.role = "User";
     }
+
+    // Getters and Setters
 
     public UUID getId() {
         return id;
@@ -98,11 +108,11 @@ public class User {
         this.password = password;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 
@@ -112,6 +122,14 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreatedAt() {

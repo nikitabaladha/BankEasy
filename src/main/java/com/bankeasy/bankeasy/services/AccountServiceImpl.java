@@ -1,12 +1,18 @@
 package com.bankeasy.bankeasy.services;
 
 import com.bankeasy.bankeasy.dao.AccountDao;
+import com.bankeasy.bankeasy.dao.ProfileDao;
+import com.bankeasy.bankeasy.dao.UserDao;
 import com.bankeasy.bankeasy.entities.Account;
+import com.bankeasy.bankeasy.entities.Profile;
 import com.bankeasy.bankeasy.entities.User;
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -15,41 +21,69 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountDao accountDao;
 
+    @Autowired
+    private ProfileDao profileDao;
+
+    @Autowired
+    private UserDao userDao;
+
     @Override
-    @Transactional
-    public Account createAccount(User user, String accountNumber) {
-        if (user == null) {
-            throw new NullPointerException("User cannot be null");
+    public Account createAccount(User user) {
+
+        Profile profile = profileDao.findByUserId(user.getId());
+
+        if (profile == null) {
+            throw new RuntimeException("Profile not found for userId: " + user.getId());
         }
-        Account account = new Account(user, accountNumber, BigDecimal.ZERO, "Active");
+
+        String accountType = profile.getAccountType();
+
+        String accountNumber = AccountUtils.generateRandomAccountNumber();
+
+        Account account = new Account(user, accountNumber, BigDecimal.ZERO, accountType);
+
         return accountDao.save(account);
     }
 
     @Override
-    @Transactional
     public Account updateAccountByUserId(UUID userId, BigDecimal newBalance) {
         Account account = accountDao.findByUserId(userId);
-        if (account == null) {
-            throw new NullPointerException("Account not found for user " + userId);
+        if (account != null) {
+            if (newBalance != null) {
+                account.setBalance(newBalance);
+            }
+            return accountDao.save(account);
         }
-        account.setBalance(newBalance);
-        return accountDao.save(account);
+        return null;
     }
 
     @Override
-    @Transactional
     public Account getAccountByUserId(UUID userId) {
         return accountDao.findByUserId(userId);
     }
 
     @Override
-    @Transactional
-    public void deleteAccount(UUID userId) {
-        Account account = accountDao.findByUserId(userId);
-        if (account == null) {
-            throw new NullPointerException("Account not found for user " + userId);
-        }
-        account.setAccountStatus("Deleted");
-        accountDao.save(account);
+    public void deleteAccount(Account account) {
+        accountDao.delete(account);
+    }
+
+    @Override
+    public Account findByUserId(UUID userId) {
+        return accountDao.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<Account> findByAccountNumber(String accountNumber) {
+        return accountDao.findByAccountNumber(accountNumber);
+    }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        return accountDao.findAll();
+    }
+
+    @Override
+    public long countAllAccounts() {
+        return accountDao.count();
     }
 }

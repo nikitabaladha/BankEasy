@@ -18,9 +18,9 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Received signup request: " +loginRequest);
+        
         LoginResponse response = loginService.login(loginRequest);
-        System.out.println("Signup response: " + response);
+       
         if (response.isHasError()) {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

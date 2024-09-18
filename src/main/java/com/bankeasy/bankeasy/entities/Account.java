@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,7 +26,7 @@ public class Account {
 
     @Column(unique = true, nullable = false)
     private UUID userId;
-    
+
     @OneToOne
     @JoinColumn(name = "userId", nullable = false, insertable = false, updatable = false)
     private User user;
@@ -36,8 +37,8 @@ public class Account {
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private String accountStatus;
+    @Column(length = 20)
+    private String accountType;
 
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
@@ -47,35 +48,68 @@ public class Account {
     @UpdateTimestamp
     private Date updatedAt;
 
-    public Account() {}
+    public Account() {
+    }
 
-    public Account(User user, String accountNumber, BigDecimal balance, String accountStatus) {
+    public Account(User user, String accountNumber, BigDecimal balance, String accountType) {
         this.userId = user.getId();
         this.user = user;
         this.accountNumber = accountNumber;
         this.balance = balance;
-        this.accountStatus = accountStatus;
+        this.accountType = accountType;
+
     }
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-    
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public UUID getUserId() {
-    	return userId;
+        return userId;
     }
 
-    public String getAccountNumber() { return accountNumber; }
-    public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
+    public String getAccountNumber() {
+        return accountNumber;
+    }
 
-    public BigDecimal getBalance() { return balance; }
-    public void setBalance(BigDecimal balance) { this.balance = balance; }
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
 
-    public String getAccountStatus() { return accountStatus;  }
-    public void setAccountStatus(String accountStatus) { this.accountStatus= accountStatus; }
+    public BigDecimal getBalance() {
+        return balance;
+    }
 
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
-    public Date getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 }

@@ -1,13 +1,15 @@
 package com.bankeasy.bankeasy.security;
+import com.bankeasy.bankeasy.entities.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.bankeasy.bankeasy.entities.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,12 +30,20 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("userId", String.class));
     }
     
+    public String extractFirstNameId(String token) {
+        return extractClaim(token, claims -> claims.get("firstNameId", String.class));
+    }
+    
     public String extractEmail(String token) {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     public String extractStatus(String token) {
         return extractClaim(token, claims -> claims.get("status", String.class));
+    }
+    
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public Date extractExpiration(String token) {
@@ -65,9 +75,12 @@ public class JwtService {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
+        
         claims.put("userId", user.getId().toString());
+        claims.put("firstName", user.getFirstName().toString());
         claims.put("email", user.getEmail());
         claims.put("status", user.getStatus());
+        claims.put("role", user.getRole());
         return createToken(claims, user.getId().toString());
     }
 
